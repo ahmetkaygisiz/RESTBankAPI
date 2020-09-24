@@ -2,6 +2,10 @@ package com.restbank.domain;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
@@ -25,13 +29,25 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Size(min = 3, max = 50)
     private String firstName;
 
+    @NotNull
+    @Size(min = 3, max = 50)
     private String lastName;
 
-    @Column(unique = true)
+    @NotNull
+    @Pattern(regexp = "^(.+)@(.+)$")
     private String email;
 
+    @NotNull
+    @Size(min = 8, max = 255)
+    @Pattern( regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$" )
+    private String password;
+
+    @NotNull
+    @Pattern(regexp = "^\\d{10}$")
     private String phoneNumber;
 
     private boolean active;

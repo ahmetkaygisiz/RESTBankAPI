@@ -11,8 +11,9 @@ import java.util.Set;
  *
  * <p>
  *     <b>Relations :</b>
- *          CreditCard (1) -> (1) Account : keeping in a row each table.
- *          Transaction (N) -> (1) CreditCard : keeeping transactions_table
+ *
+ *     CreditCard (1) -> (1) Account : keeping in a row each table.
+ *     Transaction (N) -> (1) CreditCard : keeeping transactions_table
  * </p>
  */
 
@@ -30,7 +31,9 @@ public class CreditCard {
 
     private Date expireDate;
 
-    private char[] cvc = new char[3];
+    private char[] cvc;
+
+    private double maxLimit;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_t_list")
