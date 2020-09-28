@@ -26,14 +26,17 @@ public class CreditCard {
     @Column(name = "credit_cart_id")
     Long id;
 
-    @OneToOne
-    Account account;
+    //  card Number gerekli
+    private char[] cardNumber;
 
     private Date expireDate;
 
     private char[] cvc;
 
     private double maxLimit;
+
+    @OneToOne
+    Account account;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_t_list")

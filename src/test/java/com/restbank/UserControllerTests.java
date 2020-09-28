@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.restbank.api.GenericResponse;
 import com.restbank.domain.User;
+import com.restbank.error.ApiError;
 import com.restbank.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.GeneratedValue;
+import javax.xml.ws.Response;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,7 +42,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserIsValid_receiveOK(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         ResponseEntity<Object> responseEntity = postSignup(user, Object.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -47,7 +50,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserIsValid_userSavedToDatabase(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         postSignup(user, Object.class);
 
         assertThat(userRepository.count()).isEqualTo(1);
@@ -55,7 +58,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserIsValid_receiveSuccessMessage(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
         assertThat(response.getBody().getMessage()).isNotNull();
@@ -63,7 +66,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserIsValid_passwordIsHashedInDatabase(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
 
         postSignup(user, Object.class);
         List<User> users = userRepository.findAll();
@@ -73,8 +76,8 @@ public class UserControllerTests {
     }
 
     @Test
-    public void postUser_whenUserHasfirstNameLessThanRequired_receiveBadRequest(){
-        User user = createValidUser();
+    public void postUser_whenUserHasFirstNameLessThanRequired_receiveBadRequest(){
+        User user = TestUtil.createValidUser();
         user.setFirstName("ab");
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
@@ -83,7 +86,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserHasLastNameLessThanRequired_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setLastName("ab");
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
@@ -92,7 +95,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserHasPasswordLessThanRequired_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setPassword("P42sssq");
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
@@ -101,7 +104,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserPasswordHasAllTheLowercase_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setPassword("aaaaaaaaaa");
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
@@ -110,7 +113,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserPasswordHasAllTheUppercase_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setPassword("AAAAAAAAA");
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
@@ -119,7 +122,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserPasswordHasAllTheDigits_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setPassword("123456789");
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
 
@@ -128,7 +131,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserEmailNotAnEmail_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setEmail("sadfasdfasdf");
 
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
@@ -138,7 +141,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserPhoneNumberHasLessThanRequiredDigits_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setPhoneNumber("1231231");
 
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
@@ -149,7 +152,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserPhoneNumberHasMoreThanRequiredDigits_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setPhoneNumber("12312312321222");
 
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
@@ -159,7 +162,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserPhoneNumberNotRequiredTypedData_receiveBadRequest(){
-        User user = createValidUser();
+        User user = TestUtil.createValidUser();
         user.setPhoneNumber("ABC123SFe");
 
         ResponseEntity<GenericResponse> response = postSignup(user, GenericResponse.class);
@@ -167,23 +170,95 @@ public class UserControllerTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
+    @Test
+    public void postUser_whenUserIsInvalid_receiveApiError() {
+        User user = new User();
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        assertThat(response.getBody().getUrl()).isEqualTo(API_1_0_USERS);
+    }
+
+    @Test
+    public void postUser_whenUserIsInvalid_receiveApiErrorWithValidations() {
+        User user = new User();
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        assertThat(response.getBody().getValidationErrors().size()).isEqualTo(5);
+    }
+
+    @Test
+    public void postUser_whenUserHasNullEmail_receiveMessageOfNullErrorForEmail() {
+        User user = TestUtil.createValidUser();
+        user.setEmail(null);
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("email")).isEqualTo("Email cannot be null");
+    }
+
+    @Test
+    public void postUser_whenUSerHasNullPassword_receiveGenericMessageOfNullError() {
+        User user = TestUtil.createValidUser();
+        user.setPassword(null);
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("password")).isEqualTo("Cannot be null");
+    }
+
+    @Test
+    public void postUser_whenHasInvalidPasswordPattern_receivePasswordPatternError() {
+        User user = TestUtil.createValidUser();
+        user.setPassword("123dsss");
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("password")).isEqualTo("Password must have at least one uppercase, one lowercase letter and one number");
+    }
+
+    @Test
+    public void postUser_whenHasInvalidPhoneNumberPattern_receivePhonePatternError() {
+        User user = TestUtil.createValidUser();
+        user.setPhoneNumber("123ds1sss");
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("phoneNumber")).isEqualTo("Phone number must have 10 number digits");
+    }
+
+    @Test
+    public void postUser_whenHasInvalidEmailPattern_receiveEmailPatternError() {
+        User user = TestUtil.createValidUser();
+        user.setEmail("ahmetkaygisiz.1231");
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("email")).isEqualTo("Email format is incorrect");
+    }
+
+    @Test
+    public void postUser_whenEmailDuplicated_receiveUniqueEmailError(){
+       userRepository.save(TestUtil.createValidUser());
+
+       User user = TestUtil.createValidUser();
+       ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+       Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+       assertThat(validationErrors.get("email")).isEqualTo("This email is in use");
+    }
+
+    @Test
+    public void postUser_whenPhoneNumberDuplicated_receiveUniquePhoneNumberError(){
+        userRepository.save(TestUtil.createValidUser());
+
+        User user = TestUtil.createValidUser();
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("phoneNumber")).isEqualTo("This phone number is in use");
+    }
+
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response){
         return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
     }
 
-    private User createValidUser(){
-        User user = new User();
 
-        user.setFirstName("Ahmet");
-        user.setLastName("TestUser");
-        user.setEmail("ahmetkaygisiz@gmail.com");
-        user.setPassword("P4ssw4rDd");
-        user.setPhoneNumber("5066758941");
-        user.setActive(true);
-
-        //user.setRoles();
-        //user.setAccountList();
-
-        return user;
-    }
 }
