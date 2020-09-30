@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = MinValueZeroValidator.class)
+@Constraint(validatedBy = TwoDigitsAfterPointValidator.class)
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MinValueZero {
-    String message() default "{restbankapi.constraints.balance.MinValueZero.message}";
+public @interface TwoDigitsAfterPoint {
+    String message() default "{restbankapi.constraints.balance.TwoDigitsAfterPoint.message}";
 
     Class<?>[] groups() default { };
 

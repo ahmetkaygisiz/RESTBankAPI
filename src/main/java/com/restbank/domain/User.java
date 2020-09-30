@@ -5,6 +5,7 @@ import com.restbank.domain.annotation.UniquePhoneNumber;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.validation.constraints.NotNull;
@@ -12,11 +13,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import javax.persistence.*;
-import java.beans.Transient;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <h2>User</h2>
@@ -30,7 +27,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,49 +66,4 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Account> accountList;
-
-    @Override
-    @Transient
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        /*Set<Role> roles = user.getRoles();
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
-        for (Role role: roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-        }
-
-            return authorities;
-        */
-        return AuthorityUtils.createAuthorityList("Role_USER");
-    }
-
-    @Override
-    @Transient
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    @Transient
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    @Transient
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    @Transient
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    @Transient
-    public boolean isEnabled() {
-        return true;
-    }
 }

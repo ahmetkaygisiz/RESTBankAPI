@@ -53,7 +53,7 @@ public class LoginControllerTests {
     }
 
     @Test
-    public void postLogin_witoutUserCredentials_receiveApiError() {
+    public void postLogin_withoutUserCredentials_receiveApiError() {
         ResponseEntity<ApiError> response = login(ApiError.class);
         assertThat(response.getBody().getUrl()).isEqualTo(API_1_0_LOGIN);
     }

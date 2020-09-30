@@ -1,5 +1,6 @@
 package com.restbank.configuration;
 
+import com.restbank.domain.CustomUserDetails;
 import com.restbank.domain.User;
 import com.restbank.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,6 @@ public class AuthUserService implements UserDetailsService {
         if( user == null){
             throw new UsernameNotFoundException("User not found");
         }
-        return user;
+        return new CustomUserDetails(user);
     }
 }

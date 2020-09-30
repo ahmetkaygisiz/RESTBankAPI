@@ -207,11 +207,11 @@ public class UserControllerTests {
     @Test
     public void postUser_whenHasInvalidPasswordPattern_receivePasswordPatternError() {
         User user = TestUtil.createValidUser();
-        user.setPassword("123dsss");
+        user.setPassword("123Dsss");
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
         Map<String, String> validationErrors = response.getBody().getValidationErrors();
 
-        assertThat(validationErrors.get("password")).isEqualTo("Password must have at least one uppercase, one lowercase letter and one number");
+        assertThat(validationErrors.get("password")).isEqualTo("It must have minimum 8 and maximum 255 characters");
     }
 
     @Test
@@ -259,6 +259,5 @@ public class UserControllerTests {
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response){
         return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
     }
-
 
 }

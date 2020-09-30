@@ -7,6 +7,8 @@ import com.restbank.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AccountService {
 
@@ -35,5 +37,9 @@ public class AccountService {
 
     public Account getAccountByCreditCard(CreditCard creditCard){
         return accountRepository.findByCreditCard(creditCard);
+    }
+
+    public List<Account> getAccountLists(){
+        return accountRepository.findAll();
     }
 }

@@ -1,13 +1,12 @@
 package com.restbank.domain;
 
-import com.restbank.domain.annotation.MinValueZero;
+import com.restbank.domain.annotation.TwoDigitsAfterPoint;
+import com.restbank.domain.generator.AccountNumberGenerator;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -27,20 +26,25 @@ import java.util.Set;
 @Entity
 @Table
 public class Account {
-
+    // PROBLEM : Increment param doesnt work
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "account_id")
-    private Long id;
-
-    // 8 basamakli bir ucret olmali.
-    @NotNull
     @Pattern(regexp = "^\\d{8}$")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accountNumber_generator")
+    @GenericGenerator(
+            name = "accountNumber_generator",
+            strategy = "com.restbank.domain.generator.AccountNumberGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = AccountNumberGenerator.NUMBER_FORMAT_PARAMETER, value = "%08d"),
+                    @org.hibernate.annotations.Parameter(name = AccountNumberGenerator.INCREMENT_PARAM, value = "50")
+            }
+    )
     private String accountNumber;
 
-    // min değer 0.0 olmali Pattern for String regexp = ^([0-9]*[.])?\d{2}
-     @MinValueZero
-     private Double balance;
+    // min deger 0.0 olmali Pattern for String regexp = ^([0-9]*[.])?\d{2}
+     @TwoDigitsAfterPoint
+     @DecimalMin(value = "0.0", message = "{restbankapi.constraints.balance.MinValueZero.message}")
+     private BigDecimal balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinTable( name = "user_accounts",
