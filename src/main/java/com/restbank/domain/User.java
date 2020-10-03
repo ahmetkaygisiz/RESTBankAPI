@@ -1,13 +1,9 @@
 package com.restbank.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restbank.domain.annotation.UniqueEmail;
 import com.restbank.domain.annotation.UniquePhoneNumber;
 import lombok.Data;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -64,6 +60,8 @@ public class User {
                         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles =  new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Account> accountList;
+
 }

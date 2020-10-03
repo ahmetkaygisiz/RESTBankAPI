@@ -1,5 +1,7 @@
 package com.restbank.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.restbank.domain.annotation.UniqueRoleName;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,8 +21,6 @@ public class Role {
     private Long id;
 
     @Column(unique = true)
+    @UniqueRoleName
     private String name;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
 }
