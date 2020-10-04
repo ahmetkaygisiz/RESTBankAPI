@@ -28,20 +28,10 @@ public class UserController {
         return new GenericResponse("User saved");
     }
 
-    @ExceptionHandler({MethodArgumentNotValidException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ApiError handleValidationException(MethodArgumentNotValidException exception, HttpServletRequest request){
-        ApiError apiError = new ApiError(400,"Validation error", request.getServletPath());
-
-        BindingResult result = exception.getBindingResult();
-
-        Map<String, String> validationErrors = new HashMap<>();
-
-        for(FieldError fieldError : result.getFieldErrors()){
-            validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-        apiError.setValidationErrors(validationErrors);
-
-        return apiError;
+    @GetMapping("/api/1.0/users")
+    public GenericResponse getUserList(){
+        return new GenericResponse(userService.getUserList().toString());
     }
+
+
 }

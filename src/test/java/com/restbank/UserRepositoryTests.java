@@ -25,7 +25,7 @@ public class UserRepositoryTests {
     @Test
     public void findByEmail_whenUserExists_returnUser() {
         testEntityManager.persist(TestUtil.createValidUser());
-        User inDB = userRepository.findByEmail("ahmetkaygisiz@gmail.com");
+        User inDB = userRepository.findByEmail("test@mail.com");
 
         Assertions.assertThat(inDB).isNotNull();
     }

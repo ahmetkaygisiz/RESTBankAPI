@@ -156,6 +156,7 @@ public class AccountControllerTests {
     }
 
     public <T> ResponseEntity<T> postAccount(Object request, Class<T> response){
-        return testRestTemplate.postForEntity(API_1_0_ACCOUNTS, request, response);
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .postForEntity(API_1_0_ACCOUNTS, request, response);
     }
 }

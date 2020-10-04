@@ -15,6 +15,7 @@ public class RoleService {
     RoleRepository roleRepository;
 
     public void saveRole(Role role){
+        role.setName( role.getName().toUpperCase() );
         roleRepository.save(role);
     }
 
@@ -24,5 +25,9 @@ public class RoleService {
 
     public List<Role> getRoles(){
         return roleRepository.findAll();
+    }
+
+    public Role getRoleByName(String value) {
+        return roleRepository.findByName(value);
     }
 }

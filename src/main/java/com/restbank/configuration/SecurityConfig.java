@@ -1,12 +1,9 @@
 package com.restbank.configuration;
 
-import com.restbank.domain.Role;
-import com.restbank.repository.RoleRepository;
-import com.restbank.utils.Statics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,15 +11,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    AuthUserService authUserService;
 
     private static final String[] PUBLIC_MATCHERS = {
             "/",
@@ -30,32 +21,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] ADMIN_ENDPOINTS = {
-            "/api/1.0/roles/**",
-            "/api/1.0/accounts/**",
-            "/api/1.0/users/**"
+            "/api/1.0/roles",
+            "/api/1.0/accounts",
+            "/api/1.0/users",
     };
 
     private static final String[] USER_ENDPOINTS = {
-            "/api/1.0/user/**"
+            "/api/1.0/user",
+            "/api/1.0/test",
+            "/api/1.0/login"
     };
+
+    @Autowired
+    AuthUserService authUserService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.csrf().disable().cors().disable();
 
-        http.httpBasic().authenticationEntryPoint(new BasicAuthentictionEntryPoint());
+        http.headers().disable();
 
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/1.0/login").authenticated()
-                .and()
-                .authorizeRequests().anyRequest().permitAll();
-
-/*        http.authorizeRequests()
-                .antMatchers(PUBLIC_MATCHERS)
-                	.permitAll()
-                .antMatchers(ADMIN_ENDPOINTS)
-                    .hasAuthority("ROLE_ADMIN")
-                .antMatchers(USER_ENDPOINTS)
-                    .hasAuthority("ROLE_USER");*/
+        http
+                .authorizeRequests().antMatchers(ADMIN_ENDPOINTS).hasAnyAuthority("ADMIN")
+            .and()
+                .authorizeRequests().antMatchers(USER_ENDPOINTS).hasAnyAuthority(
+                        "USER","ADMIN")
+            .and()
+                .authorizeRequests().antMatchers(PUBLIC_MATCHERS).permitAll()
+        .and()
+                .httpBasic()
+        .and()
+                .csrf().disable();
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
@@ -64,10 +65,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(authUserService).passwordEncoder(passwordEncoder());
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
 }
+

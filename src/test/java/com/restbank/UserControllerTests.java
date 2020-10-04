@@ -37,7 +37,7 @@ public class UserControllerTests {
 
     @Before
     public void cleanUp(){
-        userRepository.deleteAll();
+        userRepository.deleteByEmail("tmpUser@mail.com");
     }
 
     @Test
@@ -50,10 +50,11 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenUserIsValid_userSavedToDatabase(){
-        User user = TestUtil.createValidUser();
-        postSignup(user, Object.class);
+        User tmpUser = TestUtil.createValidUser();
+        postSignup(tmpUser, Object.class);
 
-        assertThat(userRepository.count()).isEqualTo(1);
+        // 1 - admin 2 - user 3- tmpuser
+        assertThat(userRepository.count()).isEqualTo(3);
     }
 
     @Test
@@ -257,7 +258,8 @@ public class UserControllerTests {
     }
 
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response){
-        return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .postForEntity(API_1_0_USERS, request, response);
     }
 
 }
