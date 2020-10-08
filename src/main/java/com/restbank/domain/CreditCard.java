@@ -21,10 +21,11 @@ import java.util.Set;
 @Entity
 @Table
 public class CreditCard {
+
     @Id
     @GeneratedValue
     @Column(name = "credit_cart_id")
-    Long id;
+    private Long id;
 
     //  card Number gerekli
     private char[] cardNumber;
