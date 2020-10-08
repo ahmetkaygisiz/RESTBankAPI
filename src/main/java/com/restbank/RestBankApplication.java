@@ -24,8 +24,8 @@ public class RestBankApplication implements CommandLineRunner {
     @Autowired
     RoleRepository roleRepository;
 
-/*    @Autowired
-    UserService userService;*/
+    @Autowired
+    UserService userService;
 
     public static void main(String[] args) {
         SpringApplication.run(RestBankApplication.class, args);
@@ -33,11 +33,10 @@ public class RestBankApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-       /* saveRoles();
-        saveUser();
-        saveUserRole("ahmetkaygisiz@gmail.com",Arrays.asList("ADMIN","USER"));*/
+//        saveRoles();
+//        saveUser();
+//        saveUserRole("ahmetkaygisiz@gmail.com",Arrays.asList("ADMIN","USER"));
     }
-/*
     public User saveUser(){
         User user = new User();
 
@@ -75,5 +74,4 @@ public class RestBankApplication implements CommandLineRunner {
 
         return role;
     }
-*/
 }

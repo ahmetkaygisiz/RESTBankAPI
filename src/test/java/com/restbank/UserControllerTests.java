@@ -12,13 +12,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.GeneratedValue;
-import javax.xml.ws.Response;
 import java.util.List;
 import java.util.Map;
 
@@ -257,9 +257,26 @@ public class UserControllerTests {
         assertThat(validationErrors.get("phoneNumber")).isEqualTo("This phone number is in use");
     }
 
+    @Test
+    public void getUsers_whenThereAreUsersInDB_receivePageWithUser() {
+        ResponseEntity<Object> response = getUsers(new ParameterizedTypeReference<Object>() {});
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getUsers_whenThereAreUsersInDB_receiveDataWithoutPassword() {
+        ResponseEntity<GenericResponse<List<User>>> response = getUsers(new ParameterizedTypeReference<GenericResponse<List<User>>>() {});
+        String password = response.getBody().getData().get(0).getPassword();
+        assertThat(password).isNull();
+    }
+
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response){
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
                 .postForEntity(API_1_0_USERS, request, response);
     }
 
+    public <T> ResponseEntity<T> getUsers(ParameterizedTypeReference<T> responseType){
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(API_1_0_USERS, HttpMethod.GET, null, responseType);
+    }
 }

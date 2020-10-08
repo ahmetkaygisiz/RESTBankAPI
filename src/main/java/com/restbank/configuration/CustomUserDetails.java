@@ -1,5 +1,7 @@
-package com.restbank.domain;
+package com.restbank.configuration;
 
+import com.restbank.domain.Role;
+import com.restbank.domain.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

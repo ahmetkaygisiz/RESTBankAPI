@@ -1,6 +1,7 @@
 package com.restbank.controller;
 
 import com.restbank.api.GenericResponse;
+import com.restbank.api.Info;
 import com.restbank.domain.Account;
 import com.restbank.error.ApiError;
 import com.restbank.service.AccountService;

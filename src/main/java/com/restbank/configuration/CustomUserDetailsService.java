@@ -1,6 +1,5 @@
 package com.restbank.configuration;
 
-import com.restbank.domain.CustomUserDetails;
 import com.restbank.domain.User;
 import com.restbank.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthUserService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
