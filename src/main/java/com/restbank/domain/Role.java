@@ -23,4 +23,6 @@ public class Role {
     @Column(unique = true)
     @UniqueRoleName
     private String name;
+
+
 }

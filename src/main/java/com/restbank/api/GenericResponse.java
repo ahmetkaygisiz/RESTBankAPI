@@ -8,13 +8,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GenericResponse<T> {
+
     private String message;
     private Info info;
-
     private T data;
 
     public GenericResponse(String message){
         this.message = message;
+    }
+
+    public GenericResponse(T data){
+        this.data = data;
     }
 
     public GenericResponse(Info info, T data){

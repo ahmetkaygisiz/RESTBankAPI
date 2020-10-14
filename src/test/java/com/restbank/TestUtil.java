@@ -5,6 +5,7 @@ import com.restbank.domain.Role;
 import com.restbank.domain.User;
 
 import java.math.BigDecimal;
+
 public class TestUtil {
 
     public static User createValidUser(){
@@ -14,9 +15,36 @@ public class TestUtil {
         user.setLastName("tmp");
         user.setEmail("tmpUser@mail.com");
         user.setPassword("P4ssword");
-        user.setPhoneNumber("1231321212");
+        user.setPhoneNumber("2341234232");
         user.setActive(true);
 
+        return user;
+    }
+
+    public static User updateValidUser(User user){
+        user.setFirstName("update");
+        user.setLastName("update");
+        user.setEmail("updated@mail.com");
+        user.setPassword("P4ssword");
+        user.setPhoneNumber("5643217687");
+        user.setActive(true);
+
+        return user;
+    }
+
+    public static User updateValidUserWithoutPassword(User user){
+        user.setFirstName("update");
+        user.setLastName("update");
+        user.setEmail("updated@mail.com");
+        user.setPhoneNumber("5643217687");
+        user.setActive(true);
+
+        return user;
+    }
+
+    public static User createValidUser(String username) {
+        User user = createValidUser();
+        user.setEmail(username);
         return user;
     }
 

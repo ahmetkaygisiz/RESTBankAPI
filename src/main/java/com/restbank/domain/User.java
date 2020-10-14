@@ -1,11 +1,11 @@
 package com.restbank.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.restbank.domain.annotation.UniqueEmail;
 import com.restbank.domain.annotation.UniquePhoneNumber;
 import lombok.Data;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -47,7 +47,6 @@ public class User {
     @NotNull
     @Size(min = 8, max = 255)
     @Pattern( regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$" , message = "{restbankapi.constraints.password.Pattern.message}")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @NotNull
@@ -61,7 +60,7 @@ public class User {
     @JoinTable( name = "users_roles",
                         joinColumns = @JoinColumn(name = "user_id"),
                         inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles =  new HashSet<>();
+    private Set<Role> roles =  new HashSet<Role>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
