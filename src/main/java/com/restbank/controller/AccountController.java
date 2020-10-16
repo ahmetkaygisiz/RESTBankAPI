@@ -6,6 +6,7 @@ import com.restbank.domain.Account;
 import com.restbank.error.ApiError;
 import com.restbank.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -26,16 +27,28 @@ public class AccountController {
 
     @PostMapping("/api/1.0/accounts")
     public GenericResponse createAccount(@Valid @RequestBody Account account){
-        accountService.save(account);
+        accountService.create(account);
 
         return new GenericResponse("Account created");
     }
 
     @GetMapping("/api/1.0/accounts")
-    public List<Account> getAccountLists(){
-        List<Account> accountList = accountService.getAccountLists();
-
-        return accountList;
+    public GenericResponse getAccountLists(Pageable page){
+        return accountService.getAccountLists(page);
     }
 
+    @GetMapping("/api/1.0/accounts/{accountNumber}")
+    public GenericResponse getAccountByAccountNumber(@PathVariable("accountNumber") String accountNumber){
+        return accountService.getAccountByAccountNumber(accountNumber);
+    }
+
+    @PutMapping("/api/1.0/accounts/{accountNumber}")
+    public GenericResponse updateUser(@Valid @RequestBody Account account){
+        return accountService.updateAccount(account);
+    }
+
+    @DeleteMapping("/api/1.0/accounts/{accountNumber}")
+    public GenericResponse deleteUser(@PathVariable("accountNumber") String accountNumber){
+        return accountService.deleteAccount(accountNumber);
+    }
 }

@@ -30,6 +30,6 @@ public class UserVM {
         this.email = user.getEmail();
         this.phoneNumber = user.getPhoneNumber();
         this.active = user.isActive();
-        this.roles = user.getRoles().stream().map(Role::getName).collect(Collectors.joining(","));
+        //this.roles = user.getUserRoles().stream().map(Role::getName).collect(Collectors.joining(","));
     }
 }

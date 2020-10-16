@@ -23,10 +23,4 @@ public class RoleController {
 
         return new GenericResponse("Role Created");
     }
-
-    // GET MAPPING
-
-    // PUT MAPPING
-
-    // DELETE MAPPING
 }

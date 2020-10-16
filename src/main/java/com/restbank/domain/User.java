@@ -24,10 +24,9 @@ import java.util.*;
  */
 @Data
 @Entity
-@Table(name = "users")
 public class User {
     @Id
-    @Column(name = "user_id")
+    @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -56,14 +55,11 @@ public class User {
 
     private boolean active;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable( name = "users_roles",
-                        joinColumns = @JoinColumn(name = "user_id"),
-                        inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles =  new HashSet<Role>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<UserRole> userRoles = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private List<Account> accountList;
-
 }

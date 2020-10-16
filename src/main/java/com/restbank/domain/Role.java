@@ -6,23 +6,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "roles")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
-    private Long id;
+    private int roleId;
 
     @Column(unique = true)
     @UniqueRoleName
     private String name;
 
-
+    @OneToMany(mappedBy = "role", cascade=CascadeType.ALL, fetch=FetchType.LAZY)
+    @JsonIgnore
+    private Set<UserRole> userRoles =  new HashSet<>();
 }

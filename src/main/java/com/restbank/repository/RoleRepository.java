@@ -11,5 +11,6 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
     @Transactional
     Role findByName(String name);
 
+    @Transactional
     void deleteByName(String name);
 }

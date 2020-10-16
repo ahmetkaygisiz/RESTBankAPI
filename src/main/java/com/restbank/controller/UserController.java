@@ -1,7 +1,6 @@
 package com.restbank.controller;
 
 import com.restbank.api.GenericResponse;
-import com.restbank.domain.Role;
 import com.restbank.domain.User;
 import com.restbank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +37,14 @@ public class UserController {
         return userService.updateUser(user);
     }
 
+    @DeleteMapping("/api/1.0/users/{id}")
+    public GenericResponse deleteUser(@PathVariable("id") Long id){
+        return userService.deleteUser(id);
+    }
+
     @PutMapping("/api/1.0/users/{id}/roles")
     public GenericResponse updateUserRoles(@PathVariable("id") Long id, @RequestParam String[] roles){
         return userService.updateRoles(id, roles);
     }
+
 }

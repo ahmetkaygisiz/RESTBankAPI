@@ -2,6 +2,7 @@ package com.restbank.configuration;
 
 import com.restbank.domain.Role;
 import com.restbank.domain.User;
+import com.restbank.domain.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +23,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        Set<Role> roles = user.getRoles();
+        Set<UserRole> roles = user.getUserRoles();
 
-        for (Role role: roles) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        for (UserRole userRole: roles) {
+            authorities.add(new SimpleGrantedAuthority(userRole.getRole().getName()));
         }
 
         return authorities;

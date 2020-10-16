@@ -1,9 +1,14 @@
 package com.restbank.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <h2>CreditCard</h2>
@@ -16,6 +21,7 @@ import java.util.Date;
  * </p>
  */
 @Data
+@NoArgsConstructor
 @Entity
 @Table
 public class Transaction {
@@ -24,11 +30,14 @@ public class Transaction {
     @Column(name = "transaction_id")
     private Long id;
 
-    private String name;
-
     private String description;
 
     private Date date = new Date();
 
-    private double amount;
+    private BigDecimal amount;
+
+    public Transaction(String description, BigDecimal amount) {
+        this.description = description;
+        this.amount = amount;
+    }
 }

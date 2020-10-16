@@ -1,5 +1,7 @@
 package com.restbank;
 
+import com.restbank.domain.User;
+import com.restbank.domain.UserRole;
 import com.restbank.error.ApiError;
 import com.restbank.repository.RoleRepository;
 import com.restbank.service.UserService;
@@ -16,6 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,14 +88,14 @@ public class SecurityTests {
     }
 
     // admin role'u ile admin sayfalarini cagir.
-
     @Test
     public void getUsers_whenAdminRequestAdminPages_receiveOK() {
         ResponseEntity<Object> response = requestWithAdmin(Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
-    // Util methods
+    // TestRestTemplate Methods
+
     public <T> ResponseEntity<T> requestWithoutAuth(Class<T> response){
         return testRestTemplate.postForEntity(API_1_0_LOGIN, null, response);
     }

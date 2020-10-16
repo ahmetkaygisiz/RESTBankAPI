@@ -8,7 +8,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <h2><b>Account class</b> contains users account infos</h2>
@@ -43,7 +44,7 @@ public class Account {
 
     // min deger 0.0 olmali Pattern for String regexp = ^([0-9]*[.])?\d{2}
      @TwoDigitsAfterPoint
-     @DecimalMin(value = "0.0", message = "{restbankapi.constraints.balance.MinValueZero.message}")
+     @DecimalMin(value = "0.0", message= "{restbankapi.constraints.balance.MinValueZero.message}")
      private BigDecimal balance;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,8 +55,8 @@ public class Account {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "account_t_list")
-    private Set<Transaction> transactionList;
+    private List<Transaction> transactionList = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     private CreditCard creditCard;
 }

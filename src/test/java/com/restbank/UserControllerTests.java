@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.restbank.api.GenericResponse;
 import com.restbank.domain.Role;
 import com.restbank.domain.User;
+import com.restbank.domain.UserRole;
 import com.restbank.error.ApiError;
 import com.restbank.repository.RoleRepository;
 import com.restbank.repository.UserRepository;
+import com.restbank.repository.UserRoleRepository;
 import com.restbank.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +24,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -48,6 +50,9 @@ public class UserControllerTests {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UserRoleRepository userRoleRepository;
 
     @Before
     public void cleanUp(){
@@ -337,7 +342,6 @@ public class UserControllerTests {
 
     @Test
     public void getUserById_whenUserExists_receiveUserWithoutPassword() {
-        String email = "test@mail.com";
         ResponseEntity<String> response = getUserById(1L, String.class);
         assertThat(response.getBody().contains("password")).isFalse();
     }
@@ -390,19 +394,27 @@ public class UserControllerTests {
         User user = userService.save(TestUtil.createValidUser());
 
         String path = API_1_0_USERS + "/" + user.getId() + "/roles?roles=ADMIN&roles=USER";
-        ResponseEntity<Object> response = testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
-                .exchange(path, HttpMethod.PUT, null, Object.class);
+        ResponseEntity<Object> response = putUserRole(path, null, Object.class);
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
 
+    @Test
+    public void deleteUser_whenCallDeleteMethod_receiveUserDeletedMessage() {
+        User user = userService.save(TestUtil.createValidUser());
+
+        ResponseEntity<GenericResponse> response = deleteUserById(user.getId(), GenericResponse.class);
+        assertThat(response.getBody().getMessage()).isEqualTo("User deleted.");
+    }
+
+    @Test
+    public void deleteUser_whenNotExistsUserDeleted_receiveNotFound() {
+        ResponseEntity<Object> response = deleteUserById(10L, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
 
-    public <T> ResponseEntity<T> putUser(Long id, HttpEntity<?> requestEntity, Class<T> responseType){
-        String path = API_1_0_USERS + "/" + id;
-        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
-                .exchange(path, HttpMethod.PUT, requestEntity, responseType);
-    }
-
+    // TestRestTemplate Functions
     public <T> ResponseEntity<T> postSignup(Object request, Class<T> response){
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
                 .postForEntity(API_1_0_USERS, request, response);
@@ -418,10 +430,32 @@ public class UserControllerTests {
                 .exchange(path, HttpMethod.GET, null, responseType);
     }
 
-
     public <T> ResponseEntity<T> getUserById(Long id, Class<T> responseType) {
         String path = API_1_0_USERS + "/" + id;
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
                 .getForEntity(path, responseType);
     }
+
+    public <T> ResponseEntity<T> putUser(Long id, HttpEntity<?> requestEntity, Class<T> responseType){
+        String path = API_1_0_USERS + "/" + id;
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.PUT, requestEntity, responseType);
+    }
+
+    public <T> ResponseEntity<T> putUserRole(String path, HttpEntity<?> requestEntity, Class<T> responseType){
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.PUT, null, responseType);
+    }
+
+    public <T> ResponseEntity<T> deleteUserById(Long id, Class<T> responseType) {
+        String path = API_1_0_USERS + "/" + id;
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.DELETE, null, responseType);
+    }
+
+    public <T> ResponseEntity<T> deleteUserRole(String path, Class<T> responseType) {
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.DELETE, null, responseType);
+    }
+
 }
