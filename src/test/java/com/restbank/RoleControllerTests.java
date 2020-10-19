@@ -3,6 +3,7 @@ package com.restbank;
 import com.restbank.domain.Role;
 import com.restbank.error.ApiError;
 import com.restbank.repository.RoleRepository;
+import com.restbank.utils.Statics;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 public class RoleControllerTests {
 
-    private static final String API_1_0_ROLES = "/api/1.0/roles";
+    private static final String API_1_0_ROLES = Statics.API_1_0_ROLES;
 
     @Autowired
     TestRestTemplate testRestTemplate;

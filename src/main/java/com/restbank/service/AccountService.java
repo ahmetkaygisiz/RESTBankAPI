@@ -3,9 +3,7 @@ package com.restbank.service;
 import com.restbank.api.GenericResponse;
 import com.restbank.api.Info;
 import com.restbank.domain.Account;
-import com.restbank.domain.CreditCard;
-import com.restbank.domain.User;
-import com.restbank.error.NotFoundException;
+import com.restbank.error.exceptions.NotFoundException;
 import com.restbank.repository.AccountRepository;
 import com.restbank.utils.Statics;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +26,20 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public GenericResponse<Account> getAccountByAccountNumber(String accountNumber){
-        Account accountInDB = accountRepository.findAccountByAccountNumber(accountNumber);
+
+    public Account getAccountByAccountNumber(String accountNumber){
+        Account accountInDB = accountRepository.findByAccountNumber(accountNumber);
+
+        if( accountInDB == null){
+            log.error("getAccountByAccountNumber ## Account not found with account number = " + accountNumber);
+            throw new NotFoundException("Account not found with account number = " + accountNumber);
+        }
+
+        return accountInDB;
+    }
+
+    public GenericResponse<Account> getAccountByAccountNumberWithResponse(String accountNumber){
+        Account accountInDB = accountRepository.findByAccountNumber(accountNumber);
 
         if( accountInDB == null){
             log.error("getAccountByAccountNumber ## Account not found with account number = " + accountNumber);
@@ -58,12 +68,11 @@ public class AccountService {
     }
 
     public GenericResponse<Account> updateAccount(Account account){
-        Account accountInDB = accountRepository.findAccountByAccountNumber(account.getAccountNumber());
+        Account accountInDB = accountRepository.findByAccountNumber(account.getAccountNumber());
 
         accountInDB.setBalance(account.getBalance());
         accountInDB.setUser(account.getUser());
         accountInDB.setCreditCard(account.getCreditCard());
-        accountInDB.setTransactionList(account.getTransactionList());
 
         accountRepository.save(accountInDB);
 

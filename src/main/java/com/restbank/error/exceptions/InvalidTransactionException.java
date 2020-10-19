@@ -1,4 +1,4 @@
-package com.restbank.error;
+package com.restbank.error.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

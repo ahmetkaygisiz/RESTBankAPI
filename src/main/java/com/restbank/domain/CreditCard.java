@@ -1,7 +1,9 @@
 package com.restbank.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.*;
@@ -26,7 +28,11 @@ public class CreditCard {
     @Column(name = "credit_cart_id")
     private Long id;
 
-    private char[] cardNumber;
+    private String bankCode;
+
+    private String branchCode;
+
+    private String cardNumber;
 
     private Date expireDate;
 
@@ -39,7 +45,12 @@ public class CreditCard {
     @OneToOne
     Account account;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "credit_transaction_list")
-    private List<Transaction> transactionList = new ArrayList<>();
+    @PostPersist
+    public void postPersist(){
+        String bankCode = "";
+        String branchCode = "";
+        String userCode = String.format("%08d", id);
+
+        cardNumber = bankCode + branchCode + userCode;
+    }
 }

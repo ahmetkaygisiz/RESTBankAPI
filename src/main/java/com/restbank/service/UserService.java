@@ -2,11 +2,13 @@ package com.restbank.service;
 
 import com.restbank.api.GenericResponse;
 import com.restbank.api.Info;
+import com.restbank.domain.Account;
 import com.restbank.domain.Role;
 import com.restbank.domain.User;
 import com.restbank.domain.UserRole;
 import com.restbank.domain.dto.UserVM;
-import com.restbank.error.NotFoundException;
+import com.restbank.error.exceptions.NotFoundException;
+import com.restbank.repository.AccountRepository;
 import com.restbank.repository.RoleRepository;
 import com.restbank.repository.UserRepository;
 import com.restbank.utils.Statics;
@@ -23,7 +25,6 @@ import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 @Service
 @Slf4j
@@ -38,14 +39,16 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    public User save(User user){
-        user.setPassword(encoder.encode(user.getPassword()));
+    @Autowired
+    private AccountRepository accountRepository;
 
+    public User create(User user){
+        user.setPassword(encoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Transactional
-    public User save(User user, Set<UserRole> userRoles){
+    public User create(User user, Set<UserRole> userRoles){
         User localUser = userRepository.findByEmail(user.getEmail());
 
         if (localUser != null){
@@ -65,7 +68,6 @@ public class UserService {
 
             localUser = userRepository.save(user);
         }
-
         return localUser;
     }
 
@@ -84,8 +86,7 @@ public class UserService {
     }
 
     public GenericResponse<List<UserVM>> getUserVMList(Pageable page){
-        // page object contains - content<data> & Page class variables.
-        Page<UserVM> pageUsers = userRepository.findAll(page).map(UserVM::new);
+        Page<UserVM> pageUsers = userRepository.findAll(page).map(UserVM::new); // page object contains - content<data> & Page class variables.
         Info info = new Info(pageUsers, Statics.API_1_0_USERS);
 
         return new GenericResponse<>(info, pageUsers.getContent());
@@ -101,6 +102,10 @@ public class UserService {
         dbUser.setLastName(user.getLastName());
         dbUser.setEmail(user.getEmail());
         dbUser.setUserRoles(user.getUserRoles());
+        dbUser.setAccountList(user.getAccountList());
+        dbUser.setActive(user.isActive());
+        dbUser.setPhoneNumber(user.getPhoneNumber());
+
         userRepository.save(dbUser);
 
         return new GenericResponse("User updated");
@@ -139,6 +144,23 @@ public class UserService {
         return new GenericResponse("User deleted.");
     }
 
+    @Transactional
+    public GenericResponse addUserAccount(Long id, Account account) {
+        User userInDB = userRepository.getOne(id);
+        account.setUser(userInDB);
+
+        userInDB.addAccountToList(account);
+        userRepository.save(userInDB);
+
+        return new GenericResponse<>("Account created.");
+    }
+
+    public GenericResponse<List<Account>> getUserAccounts(Long id) {
+        User user = userRepository.getOne(id);
+        List<Account> accountList = accountRepository.findAllByUser(user);
+
+        return new GenericResponse<>(accountList);
+    }
+
     // deleteUserRoles
 }
-

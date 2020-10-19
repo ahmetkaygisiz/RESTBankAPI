@@ -1,15 +1,15 @@
 package com.restbank.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restbank.domain.annotation.TwoDigitsAfterPoint;
 import com.restbank.domain.generator.AccountNumberGenerator;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <h2><b>Account class</b> contains users account infos</h2>
@@ -20,16 +20,16 @@ import java.util.List;
  *     <b>Relations :</b>
  *          User  ( 1 ) -> (N) Account    : user_accounts table
  *          CreditCard (1) -> (1) Account : keeping in a row each table.
- *          Transaction (N) -> (1) Account : keeeping transactions_table
  * </p>
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Table
 public class Account {
     // PROBLEM : Increment param doesnt work
     @Id
-    @Column(name = "account_id")
+    @Column(name = "account_id", updatable = false, insertable = false)
     @Pattern(regexp = "^\\d{8}$")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "accountNumber_generator")
     @GenericGenerator(
@@ -47,16 +47,11 @@ public class Account {
      @DecimalMin(value = "0.0", message= "{restbankapi.constraints.balance.MinValueZero.message}")
      private BigDecimal balance;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable( name = "user_accounts",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_t_list")
-    private List<Transaction> transactionList = new ArrayList<>();
-
-    @OneToOne(cascade=CascadeType.ALL)
+    @OneToOne(cascade=CascadeType.ALL, fetch = FetchType.EAGER)
     private CreditCard creditCard;
 }

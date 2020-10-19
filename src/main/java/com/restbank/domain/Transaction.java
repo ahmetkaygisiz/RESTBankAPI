@@ -1,14 +1,13 @@
 package com.restbank.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * <h2>CreditCard</h2>
@@ -20,23 +19,34 @@ import java.util.Set;
  *          Transaction (N) -> (1) Account : keeeping transactions_table
  * </p>
  */
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
-@Table
+@Table(name = "transactions")
 public class Transaction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "transaction_id")
     private Long id;
 
+    @NotNull
+    private String transferFrom;
+
+    @NotNull
+    private String transferTo;
+
+    @NotNull
+    private BigDecimal amount;
+
     private String description;
 
     private Date date = new Date();
 
-    private BigDecimal amount;
-
-    public Transaction(String description, BigDecimal amount) {
+    public Transaction(String transferFrom, String transferTo, String description, BigDecimal amount) {
+        this.transferFrom = transferFrom;
+        this.transferTo = transferTo;
         this.description = description;
         this.amount = amount;
     }

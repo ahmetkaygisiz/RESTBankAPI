@@ -2,12 +2,15 @@ package com.restbank;
 
 import com.restbank.domain.*;
 import com.restbank.repository.*;
+import com.restbank.service.AccountService;
 import com.restbank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +23,9 @@ public class RestBankApplication implements CommandLineRunner {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AccountService accountService;
 
     public static void main(String[] args) {
         SpringApplication.run(RestBankApplication.class, args);
@@ -44,8 +50,12 @@ public class RestBankApplication implements CommandLineRunner {
         userRoles.add(new UserRole(user1, role1));
         userRoles.add(new UserRole(user1, role2));
 
-        userService.save(user1, userRoles);
+        User userInDB = userService.create(user1, userRoles);
 
+        Account account = new Account();
+        account.setBalance(new BigDecimal("123.22"));
+
+        userService.addUserAccount(userInDB.getId(), account);
     }
 
 }

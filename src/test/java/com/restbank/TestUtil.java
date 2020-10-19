@@ -2,14 +2,10 @@ package com.restbank;
 
 import com.restbank.domain.Account;
 import com.restbank.domain.Role;
+import com.restbank.domain.Transaction;
 import com.restbank.domain.User;
-import com.restbank.domain.UserRole;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class TestUtil {
 
@@ -42,12 +38,10 @@ public class TestUtil {
 //        role2.setName("USER");
 //
 //        userRoles.add(new UserRole(user, role2));
-//
 //        userRoleMap.put(user, userRoles);
 //
 //        return userRoleMap;
 //    }
-//
 
     public static User updateValidUser(User user){
         user.setFirstName("update");
@@ -97,4 +91,13 @@ public class TestUtil {
         return account;
     }
 
+    public static Transaction createTransaction(String from, String to) {
+        Transaction transaction = new Transaction();
+        transaction.setTransferFrom(from);
+        transaction.setTransferTo(to);
+        transaction.setAmount(new BigDecimal("123.22"));
+        transaction.setDescription("Some description");
+
+        return transaction;
+    }
 }

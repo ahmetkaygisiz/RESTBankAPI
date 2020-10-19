@@ -5,6 +5,7 @@ import com.restbank.domain.Account;
 import com.restbank.error.ApiError;
 import com.restbank.repository.AccountRepository;
 import com.restbank.service.AccountService;
+import com.restbank.utils.Statics;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 public class AccountControllerTests {
 
-    private static final String API_1_0_ACCOUNTS = "/api/1.0/accounts";
+    private static final String API_1_0_ACCOUNTS = Statics.API_1_0_ACCOUNTS;
 
     @Autowired
     TestRestTemplate testRestTemplate;
@@ -48,6 +49,7 @@ public class AccountControllerTests {
         accountRepository.deleteAll();
     }
 
+/*
     @Test
     public void postAccount_whenAccountIsValid_receiveOk() {
         Account account = TestUtil.createValidAccount();
@@ -172,6 +174,7 @@ public class AccountControllerTests {
 
         assertThat(validationErrors.get("balance")).isEqualTo("Insufficient balance");
     }
+*/
 
     @Test
     public void getAccounts_whenThereAreAnyRecordsInDB_receiveOK(){

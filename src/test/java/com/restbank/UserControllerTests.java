@@ -3,14 +3,15 @@ package com.restbank;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.restbank.api.GenericResponse;
-import com.restbank.domain.Role;
+import com.restbank.domain.Account;
 import com.restbank.domain.User;
-import com.restbank.domain.UserRole;
 import com.restbank.error.ApiError;
 import com.restbank.repository.RoleRepository;
 import com.restbank.repository.UserRepository;
 import com.restbank.repository.UserRoleRepository;
+import com.restbank.service.AccountService;
 import com.restbank.service.UserService;
+import com.restbank.utils.Statics;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,11 +26,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashSet;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import java.util.Set;
 import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
@@ -37,7 +37,7 @@ import java.util.stream.IntStream;
 @ActiveProfiles("test")
 public class UserControllerTests {
 
-    private static final String API_1_0_USERS = "/api/1.0/users";
+    private static final String API_1_0_USERS = Statics.API_1_0_USERS;
 
     @Autowired
     TestRestTemplate testRestTemplate;
@@ -49,10 +49,13 @@ public class UserControllerTests {
     RoleRepository roleRepository;
 
     @Autowired
+    UserRoleRepository userRoleRepository;
+
+    @Autowired
     UserService userService;
 
     @Autowired
-    UserRoleRepository userRoleRepository;
+    AccountService accountService;
 
     @Before
     public void cleanUp(){
@@ -256,7 +259,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenEmailDuplicated_receiveUniqueEmailError(){
-       userService.save(TestUtil.createValidUser());
+       userService.create(TestUtil.createValidUser());
 
        User user = TestUtil.createValidUser();
        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
@@ -267,7 +270,7 @@ public class UserControllerTests {
 
     @Test
     public void postUser_whenPhoneNumberDuplicated_receiveUniquePhoneNumberError(){
-        userService.save(TestUtil.createValidUser());
+        userService.create(TestUtil.createValidUser());
 
         User user = TestUtil.createValidUser();
         ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
@@ -360,7 +363,7 @@ public class UserControllerTests {
 
     @Test
     public void putUser_whenRequestBodyIsValid_receiveOK() {
-        User user = userService.save(TestUtil.createValidUser());
+        User user = userService.create(TestUtil.createValidUser());
         User updatedUser = TestUtil.updateValidUser(user);
 
         HttpEntity<User> requestEntity = new HttpEntity<>(updatedUser);
@@ -370,7 +373,7 @@ public class UserControllerTests {
 
     @Test
     public void putUser_whenRequestBodyNotContainsPassword_notUpdatePassword() {
-        User user = userService.save(TestUtil.createValidUser());
+        User user = userService.create(TestUtil.createValidUser());
         User updatedUser = TestUtil.updateValidUserWithoutPassword(user);
         String password = user.getPassword();
 
@@ -381,7 +384,7 @@ public class UserControllerTests {
 
     @Test
     public void putUser_whenUpdatingEmailWithAlreadyExists_receiveBadRequest() {
-        User user = userService.save(TestUtil.createValidUser());
+        User user = userService.create(TestUtil.createValidUser());
         user.setEmail("test@mail.com");
 
         HttpEntity<User> requestEntity = new HttpEntity<>(user);
@@ -391,7 +394,7 @@ public class UserControllerTests {
 
     @Test
     public void putUser_whenAddedValidRoleToUser_receiveOK() {
-        User user = userService.save(TestUtil.createValidUser());
+        User user = userService.create(TestUtil.createValidUser());
 
         String path = API_1_0_USERS + "/" + user.getId() + "/roles?roles=ADMIN&roles=USER";
         ResponseEntity<Object> response = putUserRole(path, null, Object.class);
@@ -401,7 +404,7 @@ public class UserControllerTests {
 
     @Test
     public void deleteUser_whenCallDeleteMethod_receiveUserDeletedMessage() {
-        User user = userService.save(TestUtil.createValidUser());
+        User user = userService.create(TestUtil.createValidUser());
 
         ResponseEntity<GenericResponse> response = deleteUserById(user.getId(), GenericResponse.class);
         assertThat(response.getBody().getMessage()).isEqualTo("User deleted.");
@@ -411,6 +414,74 @@ public class UserControllerTests {
     public void deleteUser_whenNotExistsUserDeleted_receiveNotFound() {
         ResponseEntity<Object> response = deleteUserById(10L, Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void putUserAccount_whenAccountIsValid_receiveOK() {
+        User user = userService.create(TestUtil.createValidUser());
+        Account account = TestUtil.createValidAccount();
+
+        HttpEntity<Account> httpEntity = new HttpEntity<>(account);
+        ResponseEntity<Object> response = putUserAccount(user.getId(),httpEntity, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void putUserAccount_whenAccountIsValid_receiveCreatedMessage() {
+        User user = userService.create(TestUtil.createValidUser());
+        Account account = TestUtil.createValidAccount();
+
+        HttpEntity<Account> httpEntity = new HttpEntity<>(account);
+        ResponseEntity<GenericResponse> response = putUserAccount(user.getId(),httpEntity, GenericResponse.class);
+
+        assertThat(response.getBody().getMessage()).contains("Account created.");
+    }
+
+    @Test
+    public void putUserAccount_whenAccountIsNotValid_receiveBadRequest() {
+        User user = userService.create(TestUtil.createValidUser());
+        Account account = TestUtil.createValidAccount();
+        account.setBalance(new BigDecimal("-21.211"));
+
+        HttpEntity<Account> httpEntity = new HttpEntity<>(account);
+        ResponseEntity<Object> response = putUserAccount(user.getId(),httpEntity, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void putUserAccount_whenAccountIsNotValid_receiveApiError() {
+        User user = userService.create(TestUtil.createValidUser());
+        Account account = TestUtil.createValidAccount();
+        account.setBalance(new BigDecimal("-21.211"));
+
+        HttpEntity<Account> httpEntity = new HttpEntity<>(account);
+        ResponseEntity<ApiError> response = putUserAccount(user.getId(),httpEntity, ApiError.class);
+
+        assertThat(response.getBody().getValidationErrors().get("balance")).isNotNull();
+    }
+
+    @Test
+    public void getUserAccounts_whenUserHasAnAccount_receiveOK() {
+        User user = userService.create(TestUtil.createValidUser());
+        Account account = TestUtil.createValidAccount();
+
+        userService.addUserAccount(user.getId(), account);
+
+        ResponseEntity<Object> response = getUserAccounts(user.getId(), new ParameterizedTypeReference<Object>() {});
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getUserAccounts_whenUserHasAccount_receiveAccountList() {
+        User user = userService.create(TestUtil.createValidUser());
+        Account account = TestUtil.createValidAccount();
+
+        userService.addUserAccount(user.getId(), account);
+        List<User> users = userRepository.findAll();
+         ResponseEntity<GenericResponse<List<Account>>> response = getUserAccounts(user.getId(), new ParameterizedTypeReference<GenericResponse<List<Account>>>() {});
+        assertThat(response.getBody().getData()).isNotNull();
     }
 
 
@@ -430,6 +501,12 @@ public class UserControllerTests {
                 .exchange(path, HttpMethod.GET, null, responseType);
     }
 
+    public <T> ResponseEntity<T> getUserAccounts(Long id, ParameterizedTypeReference<T> responseType){
+        String path = API_1_0_USERS + "/" + id + "/accounts";
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.GET, null, responseType);
+    }
+
     public <T> ResponseEntity<T> getUserById(Long id, Class<T> responseType) {
         String path = API_1_0_USERS + "/" + id;
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
@@ -438,6 +515,12 @@ public class UserControllerTests {
 
     public <T> ResponseEntity<T> putUser(Long id, HttpEntity<?> requestEntity, Class<T> responseType){
         String path = API_1_0_USERS + "/" + id;
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.PUT, requestEntity, responseType);
+    }
+
+    public <T> ResponseEntity<T> putUserAccount(Long id, HttpEntity<?> requestEntity, Class<T> responseType){
+        String path = API_1_0_USERS + "/" + id + "/accounts";
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
                 .exchange(path, HttpMethod.PUT, requestEntity, responseType);
     }

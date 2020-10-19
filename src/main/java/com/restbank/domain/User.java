@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.restbank.domain.annotation.UniqueEmail;
 import com.restbank.domain.annotation.UniquePhoneNumber;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -22,11 +24,12 @@ import java.util.*;
  *          Role  (N)   -> (N) User
  * </p>
  */
-@Data
-@Entity
+@Getter
+@Setter
+@Entity(name = "users")
 public class User {
     @Id
-    @Column(name = "id", nullable = false, updatable = false)
+    @Column(name = "user_id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -60,6 +63,10 @@ public class User {
     private Set<UserRole> userRoles = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<Account> accountList;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Account> accountList = new ArrayList<>();
+
+    public void addAccountToList(Account account){
+        this.accountList.add(account);
+    }
 }
