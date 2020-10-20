@@ -1,11 +1,12 @@
 package com.restbank;
 
-import com.restbank.domain.Account;
-import com.restbank.domain.Role;
-import com.restbank.domain.Transaction;
-import com.restbank.domain.User;
+import com.restbank.domain.*;
+import com.restbank.utils.Statics;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class TestUtil {
 
@@ -99,5 +100,13 @@ public class TestUtil {
         transaction.setDescription("Some description");
 
         return transaction;
+    }
+
+    public static CreditCard createCreditCard(){
+        CreditCard creditCard = new CreditCard();
+        creditCard.setBankCode(Statics.BANK_CODE_FIRST);
+        creditCard.setBranchCode(Statics.BRANCH_CODE_BILECIK);
+
+        return creditCard;
     }
 }

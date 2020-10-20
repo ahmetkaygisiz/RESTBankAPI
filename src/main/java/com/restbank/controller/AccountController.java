@@ -3,6 +3,7 @@ package com.restbank.controller;
 import com.restbank.api.GenericResponse;
 import com.restbank.api.Info;
 import com.restbank.domain.Account;
+import com.restbank.domain.CreditCard;
 import com.restbank.error.ApiError;
 import com.restbank.service.AccountService;
 import com.restbank.utils.Statics;
@@ -45,6 +46,15 @@ public class AccountController {
     @DeleteMapping("/{accountNumber}")
     public GenericResponse deleteUser(@PathVariable("accountNumber") String accountNumber){
         return accountService.deleteAccount(accountNumber);
+    }
+
+
+    @PutMapping("/{accountNumber}/credit-card")
+    public GenericResponse createCreditCard(@PathVariable("accountNumber") String accountNumber,
+                                            @Valid @RequestBody CreditCard creditCard){
+
+         accountService.createCreditCard(accountNumber, creditCard);
+         return new GenericResponse("Credit Card created.");
     }
 
     // Dogrudan hesap olusturulmamali. Account user uzerinden olusturulmali

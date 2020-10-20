@@ -48,15 +48,15 @@ public class TransactionService {
     }
 
     public void transferAccountToCreditCard(Account from, CreditCard to, BigDecimal amount){
-        from.setBalance(from.getBalance().subtract(amount));
-        to.setAvaiableBalance(to.getAvaiableBalance().add(amount));
+//        from.setBalance(from.getBalance().subtract(amount));
+//        to.setAvaiableBalance(to.getAvaiableBalance().add(amount));
 
         // update accounts.
     }
 
     public void transferCreditCardToAccount(CreditCard from, Account to, BigDecimal amount){
-        from.setAvaiableBalance(from.getAvaiableBalance().subtract(amount));
-        to.setBalance(to.getBalance().add(amount));
+//        from.setAvaiableBalance(from.getAvaiableBalance().subtract(amount));
+//        to.setBalance(to.getBalance().add(amount));
 
         // update accounts.
     }

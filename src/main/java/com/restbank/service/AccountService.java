@@ -3,9 +3,11 @@ package com.restbank.service;
 import com.restbank.api.GenericResponse;
 import com.restbank.api.Info;
 import com.restbank.domain.Account;
+import com.restbank.domain.CreditCard;
 import com.restbank.error.exceptions.NotFoundException;
 import com.restbank.repository.AccountRepository;
 import com.restbank.utils.Statics;
+import com.restbank.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,7 +20,6 @@ import java.util.List;
 @Service
 @Slf4j
 public class AccountService {
-
     @Autowired
     AccountRepository accountRepository;
 
@@ -26,25 +27,17 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-
     public Account getAccountByAccountNumber(String accountNumber){
         Account accountInDB = accountRepository.findByAccountNumber(accountNumber);
 
-        if( accountInDB == null){
-            log.error("getAccountByAccountNumber ## Account not found with account number = " + accountNumber);
-            throw new NotFoundException("Account not found with account number = " + accountNumber);
-        }
+        if( accountInDB == null)
+            throw new NotFoundException("Account not found");
 
         return accountInDB;
     }
 
     public GenericResponse<Account> getAccountByAccountNumberWithResponse(String accountNumber){
-        Account accountInDB = accountRepository.findByAccountNumber(accountNumber);
-
-        if( accountInDB == null){
-            log.error("getAccountByAccountNumber ## Account not found with account number = " + accountNumber);
-            throw new NotFoundException("Account not found with account number = " + accountNumber);
-        }
+        Account accountInDB = getAccountByAccountNumber(accountNumber);
 
         return new GenericResponse<>(accountInDB);
     }
@@ -61,21 +54,31 @@ public class AccountService {
             accountRepository.deleteByAccountNumber(accountNumber);
         }
         catch (IllegalArgumentException | EmptyResultDataAccessException e){
-            log.error("deleteAccount ## Account not found with account number =" + accountNumber);
             throw new NotFoundException("Account not exists with account number =" + accountNumber);
         }
         return new GenericResponse("Account deleted.");
     }
 
     public GenericResponse<Account> updateAccount(Account account){
-        Account accountInDB = accountRepository.findByAccountNumber(account.getAccountNumber());
+        Account accountInDB = getAccountByAccountNumber(account.getAccountNumber());
 
         accountInDB.setBalance(account.getBalance());
         accountInDB.setUser(account.getUser());
         accountInDB.setCreditCard(account.getCreditCard());
 
         accountRepository.save(accountInDB);
-
         return new GenericResponse<>("Account updated");
+    }
+
+    public Account createCreditCard(String accountNumber, CreditCard creditCard){
+        Account account = getAccountByAccountNumber(accountNumber);
+
+        creditCard.setAccount(account);
+        creditCard.setCvc(Utils.generateCvcNumber());
+        creditCard.setExpireDate(Utils.generateExpirationDate());
+
+        account.setCreditCard(creditCard);
+
+        return  accountRepository.save(account);
     }
 }

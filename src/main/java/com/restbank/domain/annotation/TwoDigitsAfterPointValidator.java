@@ -13,7 +13,7 @@ public class TwoDigitsAfterPointValidator implements ConstraintValidator<TwoDigi
 
    public boolean isValid(BigDecimal obj, ConstraintValidatorContext context) {
       String decimalValue = obj.subtract(new BigDecimal(obj.intValue())).toString(); // Deger 123.23 ise 0.23 seklinde alıyoruz.
-      decimalValue = decimalValue.split("\\.")[1]; // Noktan sonrasını alıyoruz.
+      decimalValue = decimalValue.split("\\.")[1]; // Noktadan sonrasını alıyoruz.
 
       if(decimalValue.length() <= 2) // Noktadan sonra 2'den kücük ve esitse valid.
          return true;

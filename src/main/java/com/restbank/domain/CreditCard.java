@@ -1,12 +1,15 @@
 package com.restbank.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
+import com.restbank.domain.annotation.TwoDigitsAfterPoint;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
-import java.util.*;
+import java.time.LocalDate;
 
 /**
  * <h2>Credit Card</h2>
@@ -15,11 +18,12 @@ import java.util.*;
  *     <b>Relations :</b>
  *
  *     CreditCard (1) -> (1) Account : keeping in a row each table.
- *     Transaction (N) -> (1) CreditCard : keeeping transactions_table
  * </p>
  */
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @Table
 public class CreditCard {
@@ -28,29 +32,35 @@ public class CreditCard {
     @Column(name = "credit_cart_id")
     private Long id;
 
+    @NotNull
+    @Column(length = 4)
+    @Pattern(message="{restbankapi.constraints.creditcard.Length.message}", regexp="^(\\s*|\\d{4})$")
     private String bankCode;
 
+    @NotNull
+    @Column(length = 4) // for DB column
+    @Pattern(message="{restbankapi.constraints.creditcard.Length.message}", regexp="^(\\s*|\\d{4})$")
     private String branchCode;
 
-    private String cardNumber;
+    // May be ths must be String idk.
+    private LocalDate expireDate; // Will be generated in CreditCardService before the save
 
-    private Date expireDate;
+    @Column(length = 3)
+    @Pattern(message="{restbankapi.constraints.creditcard.Cvc.message}", regexp="^(\\s*|\\d{3})$")
+    private String cvc; // Will be generated in CreditCardService before the save
 
-    private char[] cvc;
+    @TwoDigitsAfterPoint
+    private BigDecimal maxLimit = new BigDecimal("500.00");
 
-    private BigDecimal maxLimit; // asla limit yapma, Limit DB keyword'u
+    @TwoDigitsAfterPoint
+    private BigDecimal usedAmount = new BigDecimal("0.0");
 
-    private BigDecimal avaiableBalance; // Kullandikca Eksiye dusecek. Borc odedikce bu miktar artacak.
+    @OneToOne(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER)
+    private Account account;
 
-    @OneToOne
-    Account account;
-
-    @PostPersist
-    public void postPersist(){
-        String bankCode = "";
-        String branchCode = "";
-        String userCode = String.format("%08d", id);
-
-        cardNumber = bankCode + branchCode + userCode;
+    // credit card number connected with bankCode {4digit}, branch code {4digit} and id {8digit}.
+    // I dont wnt to generate some random numbers for credit card. It must be unique like id.
+    public String getCreditCardNumber(){
+        return id != null ? bankCode + branchCode + String.format("%08d", id) : "";
     }
 }

@@ -3,29 +3,29 @@ package com.restbank.service;
 import com.restbank.domain.Account;
 import com.restbank.domain.CreditCard;
 import com.restbank.repository.CreditCardRepository;
-import com.restbank.utils.Statics;
+
+import com.restbank.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class CreditCardService {
 
     @Autowired
-    CreditCardRepository creditCardRepository;
+    private AccountService accountService;
 
-    public void create(){
-//        CreditCard creditCard = new CreditCard();
-//
-//        creditCard.setBankCode(Statics.BANK_CODE_FIRST);
-//        creditCard.setBranchCode(Statics.BRANCH_CODE_BILECIK);
-//        creditCard.setAccount(new Account());
-//
-//        creditCard.setMaxLimit(new BigDecimal(""));
-//        creditCard.setAvaiableBalance(new BigDecimal(""));
-//        creditCard.setExpireDate();
-//
-//         creditCard.
-    }
+    @Autowired
+    private CreditCardRepository creditCardRepository;
+
+    // update CreditCard
+
+    // delete CreditCard
+
+    // checkBalance()
+
+    // payment
 }
