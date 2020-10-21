@@ -7,6 +7,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -42,7 +44,7 @@ public class Transaction {
 
     private String description;
 
-    private Date date = new Date();
+    private LocalDateTime date = LocalDateTime.now();
 
     public Transaction(String transferFrom, String transferTo, String description, BigDecimal amount) {
         this.transferFrom = transferFrom;

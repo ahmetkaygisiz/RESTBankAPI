@@ -9,10 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Long> {
     @Transactional
-    Account findByAccountNumber(String accountNumber);
+    Optional<Account> findByAccountNumber(String accountNumber);
 
     @Transactional
     List<Account> findAllByUser(User user);

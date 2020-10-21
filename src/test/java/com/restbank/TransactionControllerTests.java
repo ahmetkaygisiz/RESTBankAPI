@@ -7,8 +7,8 @@ import com.restbank.error.ApiError;
 import com.restbank.repository.AccountRepository;
 import com.restbank.repository.CreditCardRepository;
 import com.restbank.repository.TransactionRepository;
+import com.restbank.service.CreditCardService;
 import com.restbank.utils.Statics;
-import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +31,8 @@ public class TransactionControllerTests {
 
     private static final String API_1_0_TRANSACTIONS    = Statics.API_1_0_TRANSACTIONS;
     private static final String BETWEEN_ACCOUNTS        = API_1_0_TRANSACTIONS + "/account2account";
+    private static final String ACCOUNT_TO_CARD         = API_1_0_TRANSACTIONS + "/account2creditcard";
+    private static final String CARD_TO_ACCOUNT         = API_1_0_TRANSACTIONS + "/creditcard2account";
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -40,6 +42,9 @@ public class TransactionControllerTests {
 
     @Autowired
     private CreditCardRepository creditCardRepository;
+
+    @Autowired
+    private CreditCardService creditCardService;
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -72,7 +77,8 @@ public class TransactionControllerTests {
 
         postTransaction(BETWEEN_ACCOUNTS, transaction, Object.class);
 
-        Account afterTransaction = accountRepository.findByAccountNumber(fromAccount.getAccountNumber());
+        Account afterTransaction = accountRepository.findByAccountNumber(fromAccount.getAccountNumber()).get();
+
         assertThat(afterTransaction.getBalance())
                 .isEqualByComparingTo(fromAccount.getBalance().subtract(transaction.getAmount()));
     }
@@ -95,12 +101,11 @@ public class TransactionControllerTests {
         Account fromAccount = accountRepository.save(TestUtil.createValidAccount());
         Account toAccount = accountRepository.save(TestUtil.createValidAccount());
 
-
         Transaction transaction = TestUtil.createTransaction(fromAccount.getAccountNumber(), toAccount.getAccountNumber());
         transaction.setAmount(new BigDecimal("123123123.22"));
 
         ResponseEntity<ApiError> response = postTransaction(BETWEEN_ACCOUNTS, transaction, ApiError.class);
-        assertThat(response.getBody().getMessage()).isEqualTo("Insufficient balance");
+        assertThat(response.getBody().getMessage()).isEqualTo("Insufficient balance/limit");
     }
 
     // From account number and to account number cannot be same
@@ -135,7 +140,51 @@ public class TransactionControllerTests {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
-    //
+    @Test
+    public void postTransaction_whenAccount2CreditCardValid_receiveOK() {
+        Account fromAccount = accountRepository.save(TestUtil.createValidAccount());
+        CreditCard toCard = creditCardRepository.save(TestUtil.createCreditCard());
+
+        Transaction transaction = TestUtil.createTransaction(fromAccount.getAccountNumber(), toCard.getCreditCardNumber());
+        transaction.setAmount(new BigDecimal("250.22"));
+
+        ResponseEntity<Object> response = postTransaction(ACCOUNT_TO_CARD, transaction, Object.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void postTransaction_whenCreditCard2AccountValid_receiveOK() {
+        CreditCard fromCard = creditCardRepository.save(TestUtil.createCreditCard());
+        Account toAccount = accountRepository.save(TestUtil.createValidAccount());
+
+        Transaction transaction = TestUtil.createTransaction(fromCard.getCreditCardNumber(), toAccount.getAccountNumber());
+        transaction.setAmount(new BigDecimal("250.22"));
+
+        ResponseEntity<Object> response = postTransaction(CARD_TO_ACCOUNT, transaction, Object.class);
+
+        CreditCard cardInDB = creditCardService.getCreditCardById(fromCard.getId());
+        Account accountInDB = accountRepository.findByAccountNumber(toAccount.getAccountNumber()).get();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void postTransaction_whenTheCreditCardLimitIsExceeded_receiveBadRequest() {
+        CreditCard fromCard = creditCardRepository.save(TestUtil.createCreditCard());
+        Account toAccount = accountRepository.save(TestUtil.createValidAccount());
+
+        Transaction transaction = TestUtil.createTransaction(fromCard.getCreditCardNumber(), toAccount.getAccountNumber());
+        transaction.setAmount(new BigDecimal("500.11"));
+
+        ResponseEntity<Object> response = postTransaction(CARD_TO_ACCOUNT, transaction, Object.class);
+
+        CreditCard cardInDB = creditCardService.getCreditCardById(fromCard.getId());
+        Account accountInDB = accountRepository.findByAccountNumber(toAccount.getAccountNumber()).get();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
     // TestRestTemplate Functions
     public <T> ResponseEntity<T> postTransaction(String path, Object request, Class<T> response){
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")

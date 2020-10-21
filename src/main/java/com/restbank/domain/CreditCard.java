@@ -1,11 +1,13 @@
 package com.restbank.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restbank.domain.annotation.TwoDigitsAfterPoint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
@@ -55,12 +57,32 @@ public class CreditCard {
     @TwoDigitsAfterPoint
     private BigDecimal usedAmount = new BigDecimal("0.0");
 
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER)
     private Account account;
+
+    @Transient
+    private String creditCardNumber;
 
     // credit card number connected with bankCode {4digit}, branch code {4digit} and id {8digit}.
     // I dont wnt to generate some random numbers for credit card. It must be unique like id.
     public String getCreditCardNumber(){
-        return id != null ? bankCode + branchCode + String.format("%08d", id) : "";
+        this.creditCardNumber = (id != null ? bankCode + branchCode + String.format("%08d", id) : "");
+        return creditCardNumber;
     }
+
+    @Override
+    public String toString() {
+        return "CreditCard{" +
+                "id=" + id +
+                ", bankCode='" + bankCode + '\'' +
+                ", branchCode='" + branchCode + '\'' +
+                ", expireDate=" + expireDate +
+                ", cvc='" + cvc + '\'' +
+                ", maxLimit=" + maxLimit +
+                ", usedAmount=" + usedAmount +
+                ", creditCardNumber='" + creditCardNumber + '\'' +
+                '}';
+    }
+
 }

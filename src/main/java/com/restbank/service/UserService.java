@@ -72,16 +72,17 @@ public class UserService {
     }
 
     public User getUserById(Long id){
-        return userRepository.getOne(id);
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            log.error("User not found with id =" + id);
+            throw new NotFoundException("User not found with id=" + id);
+        });
+
+        return user;
     }
 
     public GenericResponse<UserVM> getUserVMById(Long id){
-        User userInDB = userRepository.getById(id);
+        User userInDB = getUserById(id);
 
-        if(userInDB == null){
-            log.error("getUserVMById ## User not found with id =" + id);
-            throw new NotFoundException("User not found with id=" + id);
-        }
         return new GenericResponse<>(new UserVM(userInDB));
     }
 
@@ -93,7 +94,7 @@ public class UserService {
     }
 
     public GenericResponse updateUser(User user){
-        User dbUser = userRepository.getOne(user.getId());
+        User dbUser = getUserById(user.getId());
 
         if(user.getPassword() != null) {
             dbUser.setPassword(encoder.encode(user.getPassword())); // Eger requestBody içerisinde password bulunmuyorsa hashli olan parolayı 2 kere hashlememek için kontrol ediyoruz.
@@ -113,12 +114,7 @@ public class UserService {
 
     public GenericResponse updateRoles(Long id, String[] roles) {
         Set<UserRole> userRoles = new HashSet<>();
-        User user = userRepository.getOne(id);
-
-        if ( user == null){
-            log.error("updateRoles ## User not found with id =" + id);
-            throw new NotFoundException("User not exists with id=" + id);
-        }
+        User user = getUserById(id);
 
         for(String role : roles) {
             Role roleDB = roleRepository.findByName(role);
@@ -126,6 +122,7 @@ public class UserService {
             if(roleDB != null)
                 userRoles.add(new UserRole(user, roleDB));
         }
+
         user.setUserRoles(userRoles);
         userRepository.save(user);
 
@@ -133,20 +130,16 @@ public class UserService {
     }
 
     public GenericResponse deleteUser(Long id) {
-        try {
-            userRepository.deleteById(id);
-        }
-        catch (IllegalArgumentException | EmptyResultDataAccessException e){
-            log.error("deleteUser ## User not found with id=" + id);
-            throw new NotFoundException("User not exists with id=" + id);
-        }
+        User user = getUserById(id);
+
+        userRepository.deleteById(user.getId());
 
         return new GenericResponse("User deleted.");
     }
 
     @Transactional
     public GenericResponse addUserAccount(Long id, Account account) {
-        User userInDB = userRepository.getOne(id);
+        User userInDB = getUserById(id);
         account.setUser(userInDB);
 
         userInDB.addAccountToList(account);
@@ -156,11 +149,9 @@ public class UserService {
     }
 
     public GenericResponse<List<Account>> getUserAccounts(Long id) {
-        User user = userRepository.getOne(id);
+        User user = getUserById(id);
         List<Account> accountList = accountRepository.findAllByUser(user);
 
         return new GenericResponse<>(accountList);
     }
-
-    // deleteUserRoles
 }

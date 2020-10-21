@@ -1,9 +1,11 @@
 package com.restbank.error;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
@@ -12,7 +14,8 @@ import java.util.Map;
 @JsonInclude(value = JsonInclude.Include.NON_NULL)
 public class ApiError {
 
-    private long timestapms = new Date().getTime();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    private LocalDateTime timestamp;
 
     private int status;
 

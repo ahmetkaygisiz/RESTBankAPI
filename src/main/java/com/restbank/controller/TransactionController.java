@@ -24,12 +24,12 @@ public class TransactionController {
     }
 
     @PostMapping("/account2creditcard")
-    public GenericResponse transferAccountToCreditCard(){
-        return null;
+    public GenericResponse transferAccountToCreditCard(@Valid @RequestBody Transaction transaction){
+        return transactionService.transferAccountToCreditCard(transaction);
     }
 
     @PostMapping("/creditcard2account")
-    public GenericResponse transferCreditCardToAccount(){
-        return null;
+    public GenericResponse transferCreditCardToAccount(@Valid @RequestBody Transaction transaction){
+        return transactionService.transferCreditCardToAccount(transaction);
     }
 }

@@ -10,7 +10,6 @@ import com.restbank.utils.Statics;
 import com.restbank.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,10 +27,10 @@ public class AccountService {
     }
 
     public Account getAccountByAccountNumber(String accountNumber){
-        Account accountInDB = accountRepository.findByAccountNumber(accountNumber);
-
-        if( accountInDB == null)
+        Account accountInDB = accountRepository.findByAccountNumber(accountNumber).orElseThrow(() -> {
+            log.error("Account not found with accountNumber = " + accountNumber );
             throw new NotFoundException("Account not found");
+        });
 
         return accountInDB;
     }
@@ -50,12 +49,9 @@ public class AccountService {
     }
 
     public GenericResponse deleteAccount(String accountNumber){
-        try {
-            accountRepository.deleteByAccountNumber(accountNumber);
-        }
-        catch (IllegalArgumentException | EmptyResultDataAccessException e){
-            throw new NotFoundException("Account not exists with account number =" + accountNumber);
-        }
+        Account account = getAccountByAccountNumber(accountNumber);
+        accountRepository.deleteByAccountNumber(account.getAccountNumber());
+
         return new GenericResponse("Account deleted.");
     }
 
@@ -80,5 +76,11 @@ public class AccountService {
         account.setCreditCard(creditCard);
 
         return  accountRepository.save(account);
+    }
+
+    public GenericResponse<CreditCard> getCreditCard(String accountNumber) {
+        Account account = getAccountByAccountNumber(accountNumber);
+
+        return new GenericResponse<>(account.getCreditCard());
     }
 }

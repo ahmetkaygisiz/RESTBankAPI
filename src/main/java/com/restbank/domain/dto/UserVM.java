@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restbank.domain.Account;
 import com.restbank.domain.Role;
 import com.restbank.domain.User;
+import com.restbank.domain.UserRole;
 import com.restbank.domain.annotation.UniqueEmail;
 import com.restbank.domain.annotation.UniquePhoneNumber;
 import com.restbank.utils.Statics;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Data
@@ -30,6 +32,6 @@ public class UserVM {
         this.email = user.getEmail();
         this.phoneNumber = user.getPhoneNumber();
         this.active = user.isActive();
-        //this.roles = user.getUserRoles().stream().map(Role::getName).collect(Collectors.joining(","));
+        user.getUserRoles().stream().forEach(i -> roles += i.getRole().getName() + ",");
     }
 }

@@ -57,6 +57,11 @@ public class AccountController {
          return new GenericResponse("Credit Card created.");
     }
 
+    @GetMapping("/{accountNumber}/credit-card")
+    public GenericResponse getCreditCards(@PathVariable("accountNumber") String accountNumber){
+        return accountService.getCreditCard(accountNumber);
+    }
+
     // Dogrudan hesap olusturulmamali. Account user uzerinden olusturulmali
     /*
     @PostMapping("/api/1.0/accounts")

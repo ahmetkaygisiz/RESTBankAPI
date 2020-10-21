@@ -134,93 +134,108 @@ public class AccountControllerTests {
         CreditCard creditCard = TestUtil.createCreditCard();
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
-        ResponseEntity<Object> response = postCreditCard(account.getAccountNumber(), requestEntity, Object.class);
+        ResponseEntity<Object> response = putCreditCard(account.getAccountNumber(), requestEntity, Object.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
-    public void postCreditCard_beforeSavingCreditCard_generateCVC() {
+    public void putCreditCard_beforeSavingCreditCard_generateCVC() {
         Account account = accountRepository.save(TestUtil.createValidAccount());
         CreditCard creditCard = TestUtil.createCreditCard();
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
 
-        postCreditCard(account.getAccountNumber(), requestEntity, Object.class);
+        putCreditCard(account.getAccountNumber(), requestEntity, Object.class);
         CreditCard creditCardInDB = creditCardRepository.findAll().get(0);
 
         assertThat(creditCardInDB.getCvc()).isNotNull();
     }
 
     @Test
-    public void postCreditCard_beforeSavingCreditCard_generateExpireDate() {
+    public void putCreditCard_beforeSavingCreditCard_generateExpireDate() {
         Account account = accountRepository.save(TestUtil.createValidAccount());
         CreditCard creditCard = TestUtil.createCreditCard();
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
-        postCreditCard(account.getAccountNumber(), requestEntity, Object.class);
+        putCreditCard(account.getAccountNumber(), requestEntity, Object.class);
 
         CreditCard creditCardInDB = creditCardRepository.findAll().get(0);
         assertThat(creditCardInDB.getExpireDate()).isNotNull();
     }
 
     @Test
-    public void postCreditCard_whenBankCodeIsShorterThanNecessary_receiveBadRequest() {
+    public void putCreditCard_whenBankCodeIsShorterThanNecessary_receiveBadRequest() {
         Account account = accountRepository.save(TestUtil.createValidAccount());
         CreditCard creditCard = TestUtil.createCreditCard();
         creditCard.setBankCode("123");
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
-        ResponseEntity<Object> response = postCreditCard(account.getAccountNumber(), requestEntity, Object.class);
+        ResponseEntity<Object> response = putCreditCard(account.getAccountNumber(), requestEntity, Object.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    public void postCreditCard_whenBankCodeIsLongerThanNecessary_receiveBadRequest() {
+    public void putCreditCard_whenBankCodeIsLongerThanNecessary_receiveBadRequest() {
         Account account = accountRepository.save(TestUtil.createValidAccount());
         CreditCard creditCard = TestUtil.createCreditCard();
         creditCard.setBankCode("123123");
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
-        ResponseEntity<Object> response = postCreditCard(account.getAccountNumber(), requestEntity, Object.class);
+        ResponseEntity<Object> response = putCreditCard(account.getAccountNumber(), requestEntity, Object.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    public void postCreditCard_whenBankCodeNotRequiredTypedData_receiveBadRequest() {
+    public void putCreditCard_whenBankCodeNotRequiredTypedData_receiveBadRequest() {
         Account account = accountRepository.save(TestUtil.createValidAccount());
         CreditCard creditCard = TestUtil.createCreditCard();
         creditCard.setBankCode("AWE1");
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
-        ResponseEntity<Object> response = postCreditCard(account.getAccountNumber(), requestEntity, Object.class);
+        ResponseEntity<Object> response = putCreditCard(account.getAccountNumber(), requestEntity, Object.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    public void postCreditCard_whenBankCodeNotRequiredTypedData_receiveApiError() {
+    public void putCreditCard_whenBankCodeNotRequiredTypedData_receiveApiError() {
         Account account = accountRepository.save(TestUtil.createValidAccount());
         CreditCard creditCard = TestUtil.createCreditCard();
         creditCard.setBankCode("AWE1");
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
-        ResponseEntity<ApiError> response = postCreditCard(account.getAccountNumber(), requestEntity, ApiError.class);
+        ResponseEntity<ApiError> response = putCreditCard(account.getAccountNumber(), requestEntity, ApiError.class);
         assertThat(response.getBody().getValidationErrors().get("bankCode")).isEqualTo("Code must be 4 digit number");
     }
 
     // bankCode and branchCode has same validation props.
     @Test
-    public void postCreditCard_whenBranchCodeIsShorterThanNecessary_receiveBadRequest() {
+    public void putCreditCard_whenBranchCodeIsShorterThanNecessary_receiveBadRequest() {
         Account account = accountRepository.save(TestUtil.createValidAccount());
         CreditCard creditCard = TestUtil.createCreditCard();
         creditCard.setBranchCode("123");
 
         HttpEntity<CreditCard> requestEntity = new HttpEntity<>(creditCard);
-        ResponseEntity<Object> response = postCreditCard(account.getAccountNumber(), requestEntity, Object.class);
+        ResponseEntity<Object> response = putCreditCard(account.getAccountNumber(), requestEntity, Object.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    // get account credit card
+    @Test
+    public void getCreditCard_whenThereAreAnyRecordsInDB_receiveOK(){
+        Account account = accountService.create(TestUtil.createValidAccount());
+
+        CreditCard creditCard = TestUtil.createCreditCard();
+        creditCard.setAccount(account);
+
+        accountService.createCreditCard(account.getAccountNumber(), creditCard);
+        ResponseEntity<GenericResponse<CreditCard>> response = getCreditCard(account.getAccountNumber(),
+                                                new ParameterizedTypeReference<GenericResponse<CreditCard>>(){});
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     // TestRestTemplate Functions
@@ -229,10 +244,16 @@ public class AccountControllerTests {
                 .postForEntity(API_1_0_ACCOUNTS, request, response);
     }
 
-    public <T> ResponseEntity<T> postCreditCard(String accountNumber, HttpEntity<CreditCard> requestEntity, Class<T> response){
+    public <T> ResponseEntity<T> putCreditCard(String accountNumber, HttpEntity<CreditCard> requestEntity, Class<T> response){
         String path = API_1_0_ACCOUNTS + "/" + accountNumber +"/credit-card";
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
                 .exchange(path, HttpMethod.PUT, requestEntity, response);
+    }
+
+    public <T> ResponseEntity<T> getCreditCard(String accountNumber, ParameterizedTypeReference<T> responseType){
+        String path = API_1_0_ACCOUNTS + "/" + accountNumber +"/credit-card";
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.GET, null, responseType);
     }
 
     public <T> ResponseEntity<T> getAccounts(ParameterizedTypeReference<T> responseType){

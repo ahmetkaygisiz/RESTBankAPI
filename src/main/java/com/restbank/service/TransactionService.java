@@ -47,24 +47,46 @@ public class TransactionService {
         return new GenericResponse("Transfer completed.");
     }
 
-    public void transferAccountToCreditCard(Account from, CreditCard to, BigDecimal amount){
-//        from.setBalance(from.getBalance().subtract(amount));
-//        to.setAvaiableBalance(to.getAvaiableBalance().add(amount));
+    public GenericResponse transferAccountToCreditCard(Transaction transaction){
 
-        // update accounts.
+        Account from = accountService.getAccountByAccountNumber(transaction.getTransferFrom());
+        from.setBalance(from.getBalance().subtract(transaction.getAmount()));
+
+        // check from account balance succificient
+        isBalanceSuccificient(transaction.getAmount(), from.getBalance());
+
+        CreditCard to = creditCardService.getCreditCardByCardNumber(transaction.getTransferTo());
+
+        // Subtract usedAmount in creditCard
+        to.setUsedAmount(to.getUsedAmount().subtract(transaction.getAmount()));
+
+        accountService.updateAccount(from);
+        creditCardService.updateCreditCard(to);
+        transactionRepository.save(transaction);
+
+        return new GenericResponse("Transfer completed.");
     }
 
-    public void transferCreditCardToAccount(CreditCard from, Account to, BigDecimal amount){
-//        from.setAvaiableBalance(from.getAvaiableBalance().subtract(amount));
-//        to.setBalance(to.getBalance().add(amount));
+    public GenericResponse transferCreditCardToAccount(Transaction transaction){
+        CreditCard from = creditCardService.getCreditCardByCardNumber(transaction.getTransferFrom());
+        from.setUsedAmount(from.getUsedAmount().add(transaction.getAmount()));
 
-        // update accounts.
+        // check from creditCard maxLimit succificient
+        isBalanceSuccificient(from.getUsedAmount(), from.getMaxLimit());
+
+        Account to = accountService.getAccountByAccountNumber(transaction.getTransferTo());
+        to.setBalance(to.getBalance().add(transaction.getAmount()));
+
+        creditCardService.updateCreditCard(from);
+        accountService.updateAccount(to);
+        transactionRepository.save(transaction);
+
+        return new GenericResponse("Transfer completed.");
     }
 
-    // controls
-    private void isBalanceSuccificient(BigDecimal amount, BigDecimal accountBalance){
-        if (amount.compareTo(accountBalance) == 1) // compare to method returns 1 if amount > accountBalance else 0
-            throw new InvalidTransactionException("Insufficient balance");
+    private void isBalanceSuccificient(BigDecimal amount, BigDecimal limit){
+        if (amount.compareTo(limit) == 1) // compare to method returns 1 if amount > limit else 0
+            throw new InvalidTransactionException("Insufficient balance/limit");
     }
 
     private void isFromAndToSame(String from, String to){
