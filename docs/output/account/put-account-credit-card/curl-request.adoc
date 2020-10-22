@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/1.0/accounts/00000008/credit-card' -i -X PUT \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -d '{"id":null,"bankCode":"1234","branchCode":"1111","expireDate":null,"cvc":null,"maxLimit":500.00,"usedAmount":0.00,"creditCardNumber":""}'
+----

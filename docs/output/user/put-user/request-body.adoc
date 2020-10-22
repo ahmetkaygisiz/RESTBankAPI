@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"id":4,"firstName":"tmp","lastName":"frewtsdfg","email":"tmpUser@mail.com","password":"P4ssword","phoneNumber":"1234567890","active":true}
+----

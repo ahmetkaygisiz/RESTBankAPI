@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"data":{"accountNumber":"00000002","balance":23212.22,"creditCard":null}}
+----

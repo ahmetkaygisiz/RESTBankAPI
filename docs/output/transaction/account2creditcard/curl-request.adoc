@@ -1,0 +1,7 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/1.0/transactions/account2creditcard' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    -d '{"id":null,"transferFrom":"00000010","transferTo":"1234111100000011","amount":123.22,"description":"Some description","date":null}'
+----

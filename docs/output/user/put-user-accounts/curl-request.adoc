@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/1.0/users/3/accounts' -i -X PUT \
+    -H 'Content-Type: application/json' \
+    -d '{"accountNumber":null,"balance":23212.22,"creditCard":null}'
+----

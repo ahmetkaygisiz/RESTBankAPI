@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ echo '{"id":null,"transferFrom":"00000012","transferTo":"00000013","amount":123.22,"description":"Some description","date":null}' | http POST 'http://localhost:8080/api/1.0/transactions/account2account' \
+    'Content-Type:application/json' \
+    'Accept:application/json'
+----

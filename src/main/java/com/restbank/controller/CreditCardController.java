@@ -23,12 +23,12 @@ public class CreditCardController {
         return creditCardService.getCreditCardList(page);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public GenericResponse getCreditCardList(@Valid @RequestBody CreditCard creditCard){
         return creditCardService.updateCreditCard(creditCard);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public GenericResponse getCreditCardList(@PathVariable("id") Long id){
         return creditCardService.deleteCreditCard(id);
     }

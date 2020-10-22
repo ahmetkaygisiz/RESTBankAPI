@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/1.0/users/4' -i -X PUT \
+    -H 'Content-Type: application/json' \
+    -d '{"id":4,"firstName":"tmp","lastName":"frewtsdfg","email":"tmpUser@mail.com","password":"P4ssword","phoneNumber":"1234567890","active":true}'
+----

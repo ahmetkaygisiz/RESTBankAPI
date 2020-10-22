@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"data":{"id":1,"firstName":"admin","lastName":"admin","email":"test@mail.com","phoneNumber":"1231231212","active":true,"roles":"nullADMIN,USER,"}}
+----

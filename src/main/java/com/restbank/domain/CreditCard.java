@@ -55,7 +55,7 @@ public class CreditCard {
     private BigDecimal maxLimit = new BigDecimal("500.00");
 
     @TwoDigitsAfterPoint
-    private BigDecimal usedAmount = new BigDecimal("0.0");
+    private BigDecimal usedAmount = new BigDecimal("00.00");
 
     @JsonIgnore
     @OneToOne(cascade = CascadeType.PERSIST ,fetch = FetchType.EAGER)

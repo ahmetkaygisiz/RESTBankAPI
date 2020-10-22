@@ -1,16 +1,22 @@
 package com.restbank.service;
 
 import com.restbank.api.GenericResponse;
+import com.restbank.api.Info;
 import com.restbank.domain.Account;
 import com.restbank.domain.CreditCard;
 import com.restbank.domain.Transaction;
 import com.restbank.error.exceptions.InvalidTransactionException;
+import com.restbank.error.exceptions.NotFoundException;
 import com.restbank.repository.AccountRepository;
 import com.restbank.repository.TransactionRepository;
+import com.restbank.utils.Statics;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class TransactionService {
@@ -92,6 +98,24 @@ public class TransactionService {
     private void isFromAndToSame(String from, String to){
         if (from.equalsIgnoreCase(to))
             throw new InvalidTransactionException("Receiver and sender account numbers cannot be the same");
+    }
+
+    public GenericResponse<List<Transaction>> getTransactionList(Pageable pageable) {
+        Page<Transaction> transactionPage = transactionRepository.findAll(pageable);
+        Info info = new Info(transactionPage, Statics.API_1_0_TRANSACTIONS);
+
+        return new GenericResponse(info, transactionPage.getContent());
+    }
+
+    public Transaction getTransaction(Long id){
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> {
+            throw new NotFoundException("Transaction not found with id = " + id);
+        });
+        return transaction;
+    }
+
+    public GenericResponse getTransactionById(Long id) {
+        return new GenericResponse(getTransaction(id));
     }
 }
 

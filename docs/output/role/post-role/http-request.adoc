@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+POST /api/1.0/roles HTTP/1.1
+Content-Type: application/json
+Content-Length: 25
+Host: localhost:8080
+
+{"roleId":0,"name":"TMP"}
+----

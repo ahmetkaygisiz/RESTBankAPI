@@ -17,7 +17,7 @@ public class TestUtil {
         user.setLastName("tmp");
         user.setEmail("tmpUser@mail.com");
         user.setPassword("P4ssword");
-        user.setPhoneNumber("2341234232");
+        user.setPhoneNumber("1234567890");
         user.setActive(true);
 
         return user;
@@ -47,9 +47,7 @@ public class TestUtil {
     public static User updateValidUser(User user){
         user.setFirstName("update");
         user.setLastName("update");
-        user.setEmail("updated@mail.com");
         user.setPassword("P4ssword");
-        user.setPhoneNumber("5643217687");
         user.setActive(true);
 
         return user;

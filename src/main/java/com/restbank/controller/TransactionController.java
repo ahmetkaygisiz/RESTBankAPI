@@ -5,10 +5,8 @@ import com.restbank.domain.Transaction;
 import com.restbank.service.TransactionService;
 import com.restbank.utils.Statics;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -31,5 +29,15 @@ public class TransactionController {
     @PostMapping("/creditcard2account")
     public GenericResponse transferCreditCardToAccount(@Valid @RequestBody Transaction transaction){
         return transactionService.transferCreditCardToAccount(transaction);
+    }
+
+    @GetMapping
+    public GenericResponse getTransactions(Pageable pageable){
+        return transactionService.getTransactionList(pageable);
+    }
+
+    @GetMapping("/{id}")
+    public GenericResponse getTransactionById(@PathVariable("id") Long id){
+        return transactionService.getTransactionById(id);
     }
 }

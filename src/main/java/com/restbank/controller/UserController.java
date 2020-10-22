@@ -35,7 +35,7 @@ public class UserController {
         return userService.getUserVMById(id);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public GenericResponse updateUser(@Valid @RequestBody User user){
         return userService.updateUser(user);
     }

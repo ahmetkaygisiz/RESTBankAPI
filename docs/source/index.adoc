@@ -1,0 +1,508 @@
+= RestBANK API Guide
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: right
+:toclevels: 4
+:sectlinks:
+:sourcedir: ../../docs/output
+DocWriter : Ahmet Kaygisiz | <ahmetkaygisiz17@gmail.com>
+
+= RestBANK API Rest Service
+
+This REST API developed by Ahmet Kaygisiz for learning Tutorial Spring Boot Rest Docs.
+RestDocsTutorial has following functions.
+
+== Users
+=== Get All Users
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/user/get-users/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/user/get-users/http-request.adoc[]
+
+
+*HTTP Response*
+include::{sourcedir}/user/get-users/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/user/get-users/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/user/get-users/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/user/get-users/response-body.adoc[]
+====
+
+=== Get User By Id
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/user/get-user-by-id/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/user/get-user-by-id/http-request.adoc[]
+
+
+*HTTP Response*
+include::{sourcedir}/user/get-user-by-id/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/user/get-user-by-id/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/user/get-user-by-id/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/user/get-user-by-id/response-body.adoc[]
+====
+
+=== Update User
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/user/put-user/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/user/put-user/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/user/put-user/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/user/put-user/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/user/put-user/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/user/put-user/response-body.adoc[]
+====
+
+
+=== Delete User
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/user/delete-user/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/user/delete-user/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/user/delete-user/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/user/delete-user/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/user/delete-user/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/user/delete-user/response-body.adoc[]
+====
+
+=== Get User Accounts
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/user/get-user-accounts/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/user/get-user-accounts/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/user/get-user-accounts/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/user/get-user-accounts/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/user/get-user-accounts/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/user/get-user-accounts/response-body.adoc[]
+====
+
+=== Put User Account
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/user/put-user-accounts/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/user/put-user-accounts/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/user/put-user-accounts/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/user/put-user-accounts/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/user/put-user-accounts/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/user/put-user-accounts/response-body.adoc[]
+====
+
+
+=== Update User Roles
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/user/update-user-roles/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/user/update-user-roles/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/user/update-user-roles/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/user/update-user-roles/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/user/update-user-roles/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/user/update-user-roles/response-body.adoc[]
+====
+
+== Roles
+=== Post Role
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/role/post-role/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/role/post-role/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/role/post-role/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/role/post-role/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/role/post-role/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/role/post-role/response-body.adoc[]
+====
+
+== Accounts
+=== Get Account By Account Number
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/account/get-account-by-account-number/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/account/get-account-by-account-number/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/account/get-account-by-account-number/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/account/get-account-by-account-number/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/account/get-account-by-account-number/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/account/get-account-by-account-number/response-body.adoc[]
+====
+
+=== get Account Credit Card
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/account/get-account-credit-card/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/account/get-account-credit-card/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/account/get-account-credit-card/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/account/get-account-credit-card/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/account/get-account-credit-card/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/account/get-account-credit-card/response-body.adoc[]
+====
+
+=== get Accounts
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/account/get-accounts/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/account/get-accounts/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/account/get-accounts/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/account/get-accounts/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/account/get-accounts/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/account/get-accounts/response-body.adoc[]
+====
+
+=== Put Account
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/account/put-account/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/account/put-account/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/account/put-account/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/account/put-account/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/account/put-account/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/account/put-account/response-body.adoc[]
+====
+
+
+=== Put Account Credit Card
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/account/put-account-credit-card/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/account/put-account-credit-card/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/account/put-account-credit-card/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/account/put-account-credit-card/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/account/put-account-credit-card/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/account/put-account-credit-card/response-body.adoc[]
+====
+
+== Credit Card
+=== Get Credit Card
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/credit-card/get-credit-cards/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/credit-card/get-credit-cards/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/credit-card/get-credit-cards/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/credit-card/get-credit-cards/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/credit-card/get-credit-cards/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/credit-card/get-credit-cards/response-body.adoc[]
+====
+
+=== Put Credit Card
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/credit-card/put-credit-card/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/credit-card/put-credit-card/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/credit-card/put-credit-card/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/credit-card/put-credit-card/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/credit-card/put-credit-card/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/credit-card/put-credit-card/response-body.adoc[]
+====
+
+
+=== Delete Credit Card
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/credit-card/delete-credit-card/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/credit-card/delete-credit-card/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/credit-card/delete-credit-card/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/credit-card/delete-credit-card/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/credit-card/delete-credit-card/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/credit-card/delete-credit-card/response-body.adoc[]
+====
+
+== Transactions
+=== Account2Account
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/transaction/account2account/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/transaction/account2account/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/transaction/account2account/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/transaction/account2account/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/transaction/account2account/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/transaction/account2account/response-body.adoc[]
+====
+
+=== Account2CreditCard
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/transaction/account2creditcard/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/transaction/account2creditcard/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/transaction/account2creditcard/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/transaction/account2creditcard/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/transaction/account2creditcard/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/transaction/account2creditcard/response-body.adoc[]
+====
+
+=== CreditCard2Account
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/transaction/creditcard2account/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/transaction/creditcard2account/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/transaction/creditcard2account/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/transaction/creditcard2account/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/transaction/creditcard2account/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/transaction/creditcard2account/response-body.adoc[]
+====
+
+=== Get Transaction by ID
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/transaction/get-transaction-by-id/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/transaction/get-transaction-by-id/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/transaction/get-transaction-by-id/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/transaction/get-transaction-by-id/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/transaction/get-transaction-by-id/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/transaction/get-transaction-by-id/response-body.adoc[]
+====
+
+=== Get Transactions
+
+[%collapsible]
+====
+*Curl*
+include::{sourcedir}/transaction/get-transactions/curl-request.adoc[]
+
+*HTTP Request*
+include::{sourcedir}/transaction/get-transactions/http-request.adoc[]
+
+*HTTP Response*
+include::{sourcedir}/transaction/get-transactions/http-response.adoc[]
+
+*HTTPIE Request*
+include::{sourcedir}/transaction/get-transactions/httpie-request.adoc[]
+
+*Request Body*
+include::{sourcedir}/transaction/get-transactions/request-body.adoc[]
+
+*Response Body*
+include::{sourcedir}/transaction/get-transactions/response-body.adoc[]
+====

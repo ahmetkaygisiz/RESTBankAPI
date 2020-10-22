@@ -1,5 +1,6 @@
 package com.restbank;
 
+import com.restbank.api.GenericResponse;
 import com.restbank.domain.Account;
 import com.restbank.domain.CreditCard;
 import com.restbank.domain.Transaction;
@@ -8,6 +9,7 @@ import com.restbank.repository.AccountRepository;
 import com.restbank.repository.CreditCardRepository;
 import com.restbank.repository.TransactionRepository;
 import com.restbank.service.CreditCardService;
+import com.restbank.service.TransactionService;
 import com.restbank.utils.Statics;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,12 +17,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -48,6 +53,9 @@ public class TransactionControllerTests {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private TransactionService transactionService;
 
     @Before
     public void cleanUp(){
@@ -162,10 +170,6 @@ public class TransactionControllerTests {
         transaction.setAmount(new BigDecimal("250.22"));
 
         ResponseEntity<Object> response = postTransaction(CARD_TO_ACCOUNT, transaction, Object.class);
-
-        CreditCard cardInDB = creditCardService.getCreditCardById(fromCard.getId());
-        Account accountInDB = accountRepository.findByAccountNumber(toAccount.getAccountNumber()).get();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
@@ -179,15 +183,60 @@ public class TransactionControllerTests {
 
         ResponseEntity<Object> response = postTransaction(CARD_TO_ACCOUNT, transaction, Object.class);
 
-        CreditCard cardInDB = creditCardService.getCreditCardById(fromCard.getId());
-        Account accountInDB = accountRepository.findByAccountNumber(toAccount.getAccountNumber()).get();
-
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
+
+    @Test
+    public void getTransactions_whenThereIsAnyRecordInDB_receiveOK() {
+        CreditCard fromCard = creditCardRepository.save(TestUtil.createCreditCard());
+        Account toAccount = accountRepository.save(TestUtil.createValidAccount());
+
+        Transaction transaction = TestUtil.createTransaction(fromCard.getCreditCardNumber(),
+                toAccount.getAccountNumber());
+        transactionService.transferCreditCardToAccount(transaction);
+
+        ResponseEntity<Object> response  = getTransactions(API_1_0_TRANSACTIONS, new ParameterizedTypeReference<Object>() {});
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getTransactions_whenThereIsAnyRecordInDB_receiveGenericResponse() {
+        CreditCard fromCard = creditCardRepository.save(TestUtil.createCreditCard());
+        Account toAccount = accountRepository.save(TestUtil.createValidAccount());
+
+        Transaction transaction = TestUtil.createTransaction(fromCard.getCreditCardNumber(),
+                toAccount.getAccountNumber());
+        transactionService.transferCreditCardToAccount(transaction);
+
+        ResponseEntity<GenericResponse<List<Transaction>>> response  = getTransactions(API_1_0_TRANSACTIONS,
+                new ParameterizedTypeReference<GenericResponse<List<Transaction>>>() {});
+
+        assertThat(response.getBody().getData()).isNotNull();
+    }
+
+    @Test
+    public void getTransaction_withTransactionPathVariable_receiveOK() {
+        CreditCard fromCard = creditCardRepository.save(TestUtil.createCreditCard());
+        Account toAccount = accountRepository.save(TestUtil.createValidAccount());
+
+        Transaction transaction = TestUtil.createTransaction(fromCard.getCreditCardNumber(),
+                toAccount.getAccountNumber());
+        transactionService.transferCreditCardToAccount(transaction);
+
+        String path = API_1_0_TRANSACTIONS + "/"+ transaction.getId();
+        ResponseEntity<Object> response  = getTransactions(path, new ParameterizedTypeReference<Object>() {});
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
 
     // TestRestTemplate Functions
     public <T> ResponseEntity<T> postTransaction(String path, Object request, Class<T> response){
         return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
                 .postForEntity(path, request, response);
+    }
+
+    public <T> ResponseEntity<T> getTransactions(String path,ParameterizedTypeReference<T> responseType){
+        return testRestTemplate.withBasicAuth("test@mail.com","P4ssword")
+                .exchange(path, HttpMethod.GET, null, responseType);
     }
 }

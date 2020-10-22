@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ echo '{"roleId":0,"name":"TMP"}' | http POST 'http://localhost:8080/api/1.0/roles' \
+    'Content-Type:application/json'
+----

@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"id":null,"transferFrom":"1234111100000006","transferTo":"00000004","amount":123.22,"description":"Some description","date":null}
+----

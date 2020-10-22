@@ -1,0 +1,8 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 137
+
+{"data":{"id":14,"transferFrom":"1234111100000013","transferTo":"00000011","amount":123.22,"description":"Some description","date":null}}
+----

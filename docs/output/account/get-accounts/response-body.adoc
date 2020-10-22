@@ -1,0 +1,4 @@
+[source,options="nowrap"]
+----
+{"info":{"totalCount":0,"page":0,"size":20,"next":null,"prev":null},"data":[]}
+----

@@ -1,0 +1,6 @@
+[source,bash]
+----
+$ curl 'http://localhost:8080/api/1.0/roles' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"roleId":0,"name":"TMP"}'
+----

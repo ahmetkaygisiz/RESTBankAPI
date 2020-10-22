@@ -44,7 +44,7 @@ public class Transaction {
 
     private String description;
 
-    private LocalDateTime date = LocalDateTime.now();
+    private String date ; // for now it is nll
 
     public Transaction(String transferFrom, String transferTo, String description, BigDecimal amount) {
         this.transferFrom = transferFrom;

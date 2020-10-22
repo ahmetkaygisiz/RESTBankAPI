@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+PUT /api/1.0/users/6/roles?roles=USER HTTP/1.1
+Accept: application/json
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+
+roles=USER
+----

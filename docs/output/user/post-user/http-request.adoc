@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+POST /api/1.0/users HTTP/1.1
+Content-Type: application/json
+Content-Length: 136
+Host: localhost:8080
+
+{"id":null,"firstName":"tmp","lastName":"tmp","email":"tmpUser@mail.com","password":"P4ssword","phoneNumber":"1234567890","active":true}
+----

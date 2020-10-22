@@ -43,7 +43,7 @@ public class User {
 
     @NotNull(message = "{restbankapi.constraints.email.NotNull.message}")
     @Pattern(regexp = "^(.+)@(.+)$", message = "{restbankapi.constraints.email.Pattern.message}")
-    @UniqueEmail
+    @Column(unique = true)
     private String email;
 
     @NotNull
@@ -52,8 +52,8 @@ public class User {
     private String password;
 
     @NotNull
-    @UniquePhoneNumber
     @Pattern(regexp = "^\\d{10}$", message = "{restbankapi.constraints.phoneNumber.Pattern.message}")
+    @Column(unique = true)
     private String phoneNumber;
 
     private boolean active;
