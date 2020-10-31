@@ -44,7 +44,8 @@ public class TestUtil {
 //        return userRoleMap;
 //    }
 
-    public static User updateValidUser(User user){
+    public static User updateValidUser(){
+        User user = new User();
         user.setFirstName("update");
         user.setLastName("update");
         user.setPassword("P4ssword");
@@ -53,7 +54,8 @@ public class TestUtil {
         return user;
     }
 
-    public static User updateValidUserWithoutPassword(User user){
+    public static User updateValidUserWithoutPassword(){
+        User user = new User();
         user.setFirstName("update");
         user.setLastName("update");
         user.setEmail("updated@mail.com");

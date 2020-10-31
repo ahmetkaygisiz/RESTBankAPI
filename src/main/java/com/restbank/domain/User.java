@@ -1,10 +1,10 @@
 package com.restbank.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.restbank.domain.annotation.OnCreate;
+import com.restbank.domain.annotation.OnUpdate;
 import com.restbank.domain.annotation.UniqueEmail;
 import com.restbank.domain.annotation.UniquePhoneNumber;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,32 +28,39 @@ import java.util.*;
 @Setter
 @Entity(name = "users")
 public class User {
+
     @Id
-    @Column(name = "user_id", nullable = false, updatable = false)
+    @Column(name = "user_id", updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "{restbankapi.constraints.firstName.NotNull.message}")
-    @Size(min = 3, max = 50)
+    @NotNull(message = "{restbankapi.constraints.firstName.NotNull.message}", groups = { OnCreate.class })
+    @Size(min = 3, max = 50, groups = { OnCreate.class , OnUpdate.class})
     private String firstName;
 
-    @NotNull(message = "{restbankapi.constraints.lastName.NotNull.message}")
-    @Size(min = 3, max = 50)
+    @NotNull(message = "{restbankapi.constraints.lastName.NotNull.message}",  groups = { OnCreate.class })
+    @Size(min = 3, max = 50, groups = { OnCreate.class , OnUpdate.class})
     private String lastName;
 
-    @NotNull(message = "{restbankapi.constraints.email.NotNull.message}")
-    @Pattern(regexp = "^(.+)@(.+)$", message = "{restbankapi.constraints.email.Pattern.message}")
-    @Column(unique = true)
+    @NotNull(message = "{restbankapi.constraints.email.NotNull.message}",  groups = { OnCreate.class })
+    @Pattern(regexp = "^(.+)@(.+)$",
+            message = "{restbankapi.constraints.email.Pattern.message}",
+            groups = { OnCreate.class , OnUpdate.class })
+    @UniqueEmail( groups = { OnCreate.class })
     private String email;
 
-    @NotNull
-    @Size(min = 8, max = 255)
-    @Pattern( regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$" , message = "{restbankapi.constraints.password.Pattern.message}")
+    @NotNull(groups = { OnCreate.class })
+    @Size(min = 8, max = 255, groups = { OnCreate.class , OnUpdate.class })
+    @Pattern( regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$",
+            message = "{restbankapi.constraints.password.Pattern.message}",
+            groups = { OnCreate.class , OnUpdate.class })
     private String password;
 
-    @NotNull
-    @Pattern(regexp = "^\\d{10}$", message = "{restbankapi.constraints.phoneNumber.Pattern.message}")
-    @Column(unique = true)
+    @NotNull( groups = { OnCreate.class } )
+    @Pattern(regexp = "^\\d{10}$",
+            message = "{restbankapi.constraints.phoneNumber.Pattern.message}",
+            groups = { OnCreate.class , OnUpdate.class })
+    @UniquePhoneNumber( groups = { OnCreate.class } )
     private String phoneNumber;
 
     private boolean active;

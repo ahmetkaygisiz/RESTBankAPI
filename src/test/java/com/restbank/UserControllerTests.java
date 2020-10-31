@@ -257,27 +257,27 @@ public class UserControllerTests {
         assertThat(validationErrors.get("email")).isEqualTo("Email format is incorrect");
     }
 
-//    @Test
-//    public void postUser_whenEmailDuplicated_receiveUniqueEmailError(){
-//       userService.create(TestUtil.createValidUser());
-//
-//       User user = TestUtil.createValidUser();
-//       ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-//       Map<String, String> validationErrors = response.getBody().getValidationErrors();
-//
-//       assertThat(validationErrors.get("email")).isEqualTo("This email is in use");
-//    }
+    @Test
+    public void postUser_whenEmailDuplicated_receiveUniqueEmailError(){
+       userService.create(TestUtil.createValidUser());
 
-//    @Test
-//    public void postUser_whenPhoneNumberDuplicated_receiveUniquePhoneNumberError(){
-//        userService.create(TestUtil.createValidUser());
-//
-//        User user = TestUtil.createValidUser();
-//        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
-//        Map<String, String> validationErrors = response.getBody().getValidationErrors();
-//
-//        assertThat(validationErrors.get("phoneNumber")).isEqualTo("This phone number is in use");
-//    }
+       User user = TestUtil.createValidUser();
+       ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+       Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+       assertThat(validationErrors.get("email")).isEqualTo("This email is in use");
+    }
+
+    @Test
+    public void postUser_whenPhoneNumberDuplicated_receiveUniquePhoneNumberError(){
+        userService.create(TestUtil.createValidUser());
+
+        User user = TestUtil.createValidUser();
+        ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+        Map<String, String> validationErrors = response.getBody().getValidationErrors();
+
+        assertThat(validationErrors.get("phoneNumber")).isEqualTo("This phone number is in use");
+    }
 
     @Test
     public void getUsers_whenThereAreUsersInDB_receivePageWithUser() {
@@ -291,27 +291,27 @@ public class UserControllerTests {
         assertThat(response.getBody().getData().get(0).containsKey("password")).isFalse();
     }
 
-//    @Test
-//    public void getUsers_whenPageIsRequestedFor3ItemsPerPageWhereTheDatabaseHas20Users_receive3Users() {
-//        IntStream.rangeClosed(1, 20).mapToObj(i -> "tmp-test-user" + i)
-//                .map(TestUtil::createValidUser)
-//                .forEach(userRepository::save);
-//
-//        String path = API_1_0_USERS + "?page=0&size=3";
-//
-//        ResponseEntity<GenericResponse<List<Object>>> response = getUsers(path, new ParameterizedTypeReference<GenericResponse<List<Object>>>() {});
-//        assertThat(response.getBody().getData().size()).isEqualTo(3);
-//    }
-//
-//    @Test
-//    public void getUsers_whenPageSizeNotProvided_receivePageSizeAs20() {
-//        IntStream.rangeClosed(1, 20).mapToObj(i -> "tmp-test-user" + i)
-//                .map(TestUtil::createValidUser)
-//                .forEach(userRepository::save);
-//
-//        ResponseEntity<GenericResponse<List<Object>>> response = getUsers(new ParameterizedTypeReference<GenericResponse<List<Object>>>() {});
-//        assertThat(response.getBody().getData().size()).isEqualTo(20);
-//    }
+    @Test
+    public void getUsers_whenPageIsRequestedFor3ItemsPerPageWhereTheDatabaseHas20Users_receive3Users() {
+        IntStream.rangeClosed(1, 20).mapToObj(i -> "tmp-test-user" + i)
+                .map(TestUtil::createValidUser)
+                .forEach(userRepository::save);
+
+        String path = API_1_0_USERS + "?page=0&size=3";
+
+        ResponseEntity<GenericResponse<List<Object>>> response = getUsers(path, new ParameterizedTypeReference<GenericResponse<List<Object>>>() {});
+        assertThat(response.getBody().getData().size()).isEqualTo(3);
+    }
+
+    @Test
+    public void getUsers_whenPageSizeNotProvided_receivePageSizeAs20() {
+        IntStream.rangeClosed(1, 20).mapToObj(i -> "tmp-test-user" + i)
+                .map(TestUtil::createValidUser)
+                .forEach(userRepository::save);
+
+        ResponseEntity<GenericResponse<List<Object>>> response = getUsers(new ParameterizedTypeReference<GenericResponse<List<Object>>>() {});
+        assertThat(response.getBody().getData().size()).isEqualTo(20);
+    }
 
     @Test
     public void getUsers_whenPageSizeIsGreaterThan100_receivePageSizeAs100() {
@@ -364,7 +364,7 @@ public class UserControllerTests {
     @Test
     public void putUser_whenRequestBodyIsValid_receiveOK() {
         User user = userService.create(TestUtil.createValidUser());
-        User updatedUser = TestUtil.updateValidUser(user);
+        User updatedUser = TestUtil.updateValidUser();
 
         HttpEntity<User> requestEntity = new HttpEntity<>(updatedUser);
         ResponseEntity<Object> response = putUser(user.getId(), requestEntity, Object.class);
@@ -374,12 +374,11 @@ public class UserControllerTests {
     @Test
     public void putUser_whenRequestBodyNotContainsPassword_notUpdatePassword() {
         User user = userService.create(TestUtil.createValidUser());
-        User updatedUser = TestUtil.updateValidUserWithoutPassword(user);
-        String password = user.getPassword();
+        User updatedUser = TestUtil.updateValidUserWithoutPassword();
 
         HttpEntity<User> requestEntity = new HttpEntity<>(updatedUser);
-        putUser(user.getId(), requestEntity, Object.class);
-        assertThat(updatedUser.getPassword()).isEqualTo(password);
+        ResponseEntity<Object> response = putUser(user.getId(), requestEntity, Object.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -389,7 +388,7 @@ public class UserControllerTests {
 
         HttpEntity<User> requestEntity = new HttpEntity<>(user);
         ResponseEntity<Object> response = putUser(user.getId(), requestEntity, Object.class);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test

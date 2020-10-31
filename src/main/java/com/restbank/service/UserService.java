@@ -7,6 +7,8 @@ import com.restbank.domain.Role;
 import com.restbank.domain.User;
 import com.restbank.domain.UserRole;
 import com.restbank.domain.dto.UserVM;
+import com.restbank.error.exceptions.ValidationException;
+import com.restbank.error.exceptions.NotAcceptableException;
 import com.restbank.error.exceptions.NotFoundException;
 import com.restbank.repository.AccountRepository;
 import com.restbank.repository.RoleRepository;
@@ -14,17 +16,21 @@ import com.restbank.repository.UserRepository;
 import com.restbank.utils.Statics;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.beans.FeatureDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -93,19 +99,24 @@ public class UserService {
         return new GenericResponse<>(info, pageUsers.getContent());
     }
 
-    public GenericResponse updateUser(User user){
-        User dbUser = getUserById(user.getId());
+    public GenericResponse updateUser(Long id, User user) throws InvocationTargetException, IllegalAccessException {
+
+        User dbUser = getUserById(id);
 
         if(user.getPassword() != null) {
             dbUser.setPassword(encoder.encode(user.getPassword())); // Eger requestBody içerisinde password bulunmuyorsa hashli olan parolayı 2 kere hashlememek için kontrol ediyoruz.
         }
-        dbUser.setFirstName(user.getFirstName());
-        dbUser.setLastName(user.getLastName());
-        dbUser.setEmail(user.getEmail());
-        dbUser.setUserRoles(user.getUserRoles());
-        dbUser.setAccountList(user.getAccountList());
-        dbUser.setActive(user.isActive());
-        dbUser.setPhoneNumber(user.getPhoneNumber());
+
+        if(user.getEmail() != null )
+            if (userRepository.findByEmail(user.getEmail()) != null )
+                throw new ValidationException("email already in use");
+
+        if(user.getPhoneNumber() != null)
+            if (userRepository.findByPhoneNumber(user.getPhoneNumber()) != null)
+                throw new ValidationException("phone number already in use");
+
+        // Tesekkurler kod gemisi : https://medium.com/kodgemisi/spring-data-jpa-partial-update-782db3734ba */
+        BeanUtils.copyProperties(user, dbUser, getNullProps(user)); // from, to, ignoreNullParams
 
         userRepository.save(dbUser);
 
@@ -132,6 +143,11 @@ public class UserService {
     public GenericResponse deleteUser(Long id) {
         User user = getUserById(id);
 
+        for (Account account : user.getAccountList())
+            if (account.getCreditCard() != null)
+                if(account.getCreditCard().getUsedAmount().compareTo(new BigDecimal("0")) == 1) // compare to method returns 1 if amount > limit else 0
+                    throw new NotAcceptableException("User cannot be deleted because credit card has debt");
+
         userRepository.deleteById(user.getId());
 
         return new GenericResponse("User deleted.");
@@ -153,5 +169,13 @@ public class UserService {
         List<Account> accountList = accountRepository.findAllByUser(user);
 
         return new GenericResponse<>(accountList);
+    }
+
+    private String[] getNullProps(User user) {
+        final BeanWrapper wrappedSource = new BeanWrapperImpl(user);
+        return Stream.of(wrappedSource.getPropertyDescriptors())
+                .map(FeatureDescriptor::getName)
+                .filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null)
+                .toArray(String[]::new);
     }
 }

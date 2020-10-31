@@ -26,8 +26,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/api/1.0/accounts/*",
             "/api/1.0/users",
             "/api/1.0/users/*",
-            "/api/1.0/transactions/*",
             "/api/1.0/transactions",
+            "/api/1.0/transactions/*",
+            "/api/1.0/credit-cards",
+            "/api/1.0/credit-cards/*",
     };
 
     private static final String[] USER_ENDPOINTS = {

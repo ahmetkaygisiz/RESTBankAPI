@@ -3,13 +3,17 @@ package com.restbank.controller;
 import com.restbank.api.GenericResponse;
 import com.restbank.domain.Account;
 import com.restbank.domain.User;
+import com.restbank.domain.annotation.OnCreate;
+import com.restbank.domain.annotation.OnUpdate;
 import com.restbank.service.UserService;
 import com.restbank.utils.Statics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.lang.reflect.InvocationTargetException;
 
 @RestController
 @RequestMapping(Statics.API_1_0_USERS)
@@ -19,7 +23,7 @@ public class UserController {
     UserService userService;
 
     @PostMapping
-    public GenericResponse createUser(@Valid @RequestBody User user){
+    public GenericResponse createUser(@Validated(OnCreate.class) @RequestBody User user){
         userService.create(user);
 
         return new GenericResponse("User saved");
@@ -36,8 +40,9 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public GenericResponse updateUser(@Valid @RequestBody User user){
-        return userService.updateUser(user);
+    public GenericResponse updateUser(@PathVariable("id") Long id,
+                                      @Validated(OnUpdate.class) @RequestBody User user) throws InvocationTargetException, IllegalAccessException {
+        return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/{id}")

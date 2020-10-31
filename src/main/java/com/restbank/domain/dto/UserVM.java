@@ -32,6 +32,9 @@ public class UserVM {
         this.email = user.getEmail();
         this.phoneNumber = user.getPhoneNumber();
         this.active = user.isActive();
-        user.getUserRoles().stream().forEach(i -> roles += i.getRole().getName() + ",");
+        user.getUserRoles().stream().forEach(i -> {
+            if(i != null)
+                roles += i.getRole().getName() + ",";
+        });
     }
 }

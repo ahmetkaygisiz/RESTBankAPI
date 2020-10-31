@@ -4,6 +4,7 @@ import com.restbank.api.GenericResponse;
 import com.restbank.api.Info;
 import com.restbank.domain.Account;
 import com.restbank.domain.CreditCard;
+import com.restbank.error.exceptions.NotAcceptableException;
 import com.restbank.error.exceptions.NotFoundException;
 import com.restbank.repository.AccountRepository;
 import com.restbank.utils.Statics;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -50,6 +52,11 @@ public class AccountService {
 
     public GenericResponse deleteAccount(String accountNumber){
         Account account = getAccountByAccountNumber(accountNumber);
+
+        if (account.getCreditCard() != null)
+            if(account.getCreditCard().getUsedAmount().compareTo(new BigDecimal("0")) == 1) // compare to method returns 1 if amount > limit else 0
+                throw new NotAcceptableException("Account cannot be deleted because credit card has debt");
+
         accountRepository.deleteByAccountNumber(account.getAccountNumber());
 
         return new GenericResponse("Account deleted.");
