@@ -15,10 +15,9 @@ import com.restbank.repository.RoleRepository;
 import com.restbank.repository.UserRepository;
 import com.restbank.utils.Statics;
 
+import com.restbank.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +25,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.beans.FeatureDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -104,7 +101,7 @@ public class UserService {
         User dbUser = getUserById(id);
 
         if(user.getPassword() != null) {
-            dbUser.setPassword(encoder.encode(user.getPassword())); // Eger requestBody içerisinde password bulunmuyorsa hashli olan parolayı 2 kere hashlememek için kontrol ediyoruz.
+            user.setPassword(encoder.encode(user.getPassword())); // Eger requestBody içerisinde password bulunmuyorsa hashli olan parolayı 2 kere hashlememek için kontrol ediyoruz.
         }
 
         if(user.getEmail() != null )
@@ -116,7 +113,7 @@ public class UserService {
                 throw new ValidationException("phone number already in use");
 
         // Tesekkurler kod gemisi : https://medium.com/kodgemisi/spring-data-jpa-partial-update-782db3734ba */
-        BeanUtils.copyProperties(user, dbUser, getNullProps(user)); // from, to, ignoreNullParams
+        BeanUtils.copyProperties(user, dbUser, Utils.getNullProps(user)); // from, to, ignoreNullParams
 
         userRepository.save(dbUser);
 
@@ -169,13 +166,5 @@ public class UserService {
         List<Account> accountList = accountRepository.findAllByUser(user);
 
         return new GenericResponse<>(accountList);
-    }
-
-    private String[] getNullProps(User user) {
-        final BeanWrapper wrappedSource = new BeanWrapperImpl(user);
-        return Stream.of(wrappedSource.getPropertyDescriptors())
-                .map(FeatureDescriptor::getName)
-                .filter(propertyName -> wrappedSource.getPropertyValue(propertyName) == null)
-                .toArray(String[]::new);
     }
 }

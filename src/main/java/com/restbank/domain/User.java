@@ -63,7 +63,7 @@ public class User {
     @UniquePhoneNumber( groups = { OnCreate.class } )
     private String phoneNumber;
 
-    private boolean active;
+    private boolean active = true;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

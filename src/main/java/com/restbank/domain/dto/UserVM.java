@@ -23,7 +23,7 @@ public class UserVM {
     private String email;
     private String phoneNumber;
     private boolean active;
-    private String roles;
+    private String roles = "";
 
     public UserVM(User user) {
         this.id = user.getId();
@@ -34,7 +34,7 @@ public class UserVM {
         this.active = user.isActive();
         user.getUserRoles().stream().forEach(i -> {
             if(i != null)
-                roles += i.getRole().getName() + ",";
+                roles += i.getRole().getName() + " ";
         });
     }
 }

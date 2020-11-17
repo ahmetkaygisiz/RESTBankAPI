@@ -17,7 +17,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] PUBLIC_MATCHERS = {
             "/",
-            "/endpoints"
+            "/endpoints",
+            "/api/1.0/login"
     };
 
     private static final String[] ADMIN_ENDPOINTS = {
@@ -33,9 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private static final String[] USER_ENDPOINTS = {
-            "/api/1.0/user",
-            "/api/1.0/test",
-            "/api/1.0/login"
+            "/api/1.0/customers",
+            "/api/1.0/customers/*",
     };
 
     @Autowired

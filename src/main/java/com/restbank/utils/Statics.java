@@ -9,6 +9,7 @@ public class Statics {
 
     public static final String API_1_0_TRANSACTIONS = "/api/1.0/transactions";
     public static final String API_1_0_CREDIT_CARDS = "/api/1.0/credit-cards";
+    public static final String API_1_0_CUSTOMERS = "/api/1.0/customers";
 
     // TEMP DATA - This can be stored in db. But I dont want to right now.
     public static final String BANK_CODE_FIRST      = "1234";
