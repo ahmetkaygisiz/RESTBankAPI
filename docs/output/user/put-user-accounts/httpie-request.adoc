@@ -1,5 +1,5 @@
 [source,bash]
 ----
-$ echo '{"accountNumber":null,"balance":23212.22,"creditCard":null}' | http PUT 'http://localhost:8080/api/1.0/users/3/accounts' \
+$ echo '{"accountNumber":null,"balance":23212.22,"creditCard":null}' | http PUT 'http://localhost:8080/api/1.0/users/23/accounts' \
     'Content-Type:application/json'
 ----

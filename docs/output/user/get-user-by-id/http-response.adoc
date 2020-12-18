@@ -2,7 +2,7 @@
 ----
 HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 147
+Content-Length: 143
 
-{"data":{"id":1,"firstName":"admin","lastName":"admin","email":"test@mail.com","phoneNumber":"1231231212","active":true,"roles":"nullADMIN,USER,"}}
+{"data":{"id":1,"firstName":"admin","lastName":"admin","email":"test@mail.com","phoneNumber":"1231231212","active":true,"roles":"USER ADMIN "}}
 ----

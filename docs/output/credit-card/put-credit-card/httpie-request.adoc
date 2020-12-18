@@ -1,6 +1,6 @@
 [source,bash]
 ----
-$ echo '{"id":4,"bankCode":"1234","branchCode":"1111","expireDate":null,"cvc":"702","maxLimit":1000.00,"usedAmount":0.00,"creditCardNumber":"1234111100000004"}' | http PUT 'http://localhost:8080/api/1.0/credit-cards/4' \
+$ echo '{"id":52,"bankCode":"1234","branchCode":"1111","expireDate":null,"cvc":"290","maxLimit":1000.00,"usedAmount":0.00,"creditCardNumber":"1234111100000052"}' | http PUT 'http://localhost:8080/api/1.0/credit-cards/52' \
     'Content-Type:application/json' \
     'Accept:application/json'
 ----

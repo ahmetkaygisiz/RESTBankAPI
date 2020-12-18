@@ -1,5 +1,5 @@
 [source,bash]
 ----
-$ http GET 'http://localhost:8080/api/1.0/accounts/00000009/credit-card' \
+$ http GET 'http://localhost:8080/api/1.0/accounts/00000510/credit-card' \
     'Accept:application/json'
 ----

@@ -2,7 +2,7 @@
 ----
 HTTP/1.1 200 OK
 Content-Type: application/json
-Content-Length: 205
+Content-Length: 206
 
-{"info":{"totalCount":1,"page":1,"size":20,"next":null,"prev":null},"data":[{"id":9,"transferFrom":"1234111100000008","transferTo":"00000007","amount":123.22,"description":"Some description","date":null}]}
+{"info":{"totalCount":1,"page":1,"size":20,"next":null,"prev":null},"data":[{"id":57,"transferFrom":"1234111100000056","transferTo":"00000508","amount":123.22,"description":"Some description","date":null}]}
 ----

@@ -1,5 +1,5 @@
 [source,bash]
 ----
-$ http DELETE 'http://localhost:8080/api/1.0/credit-cards/3' \
+$ http DELETE 'http://localhost:8080/api/1.0/credit-cards/51' \
     'Accept:application/json'
 ----

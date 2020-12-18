@@ -1,5 +1,5 @@
 [source,bash]
 ----
-$ curl 'http://localhost:8080/api/1.0/credit-cards/3' -i -X DELETE \
+$ curl 'http://localhost:8080/api/1.0/credit-cards/51' -i -X DELETE \
     -H 'Accept: application/json'
 ----

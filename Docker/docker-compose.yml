@@ -1,0 +1,38 @@
+version: '3.7'
+
+networks:
+    backend:
+        name: restbank-network
+        driver: bridge
+
+volumes:
+ restbankapi: 
+  
+services:
+    app:
+        image: "restbank-api:latest"
+        container_name: restbankapi
+        ports: ["8080:8080"]
+        networks:
+            - backend
+        depends_on:
+            - db
+        environment:
+          - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/restbankapi
+          - SPRING_DATASOURCE_USERNAME=postgres
+          - SPRING_DATASOURCE_PASSWORD=welcome1
+          - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    db:
+      image: postgres
+      restart: always
+      networks:
+          - backend
+      volumes:
+          - restbankapi:/data/devops/volumes/postgresql/data
+      environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: welcome1
+          POSTGRES_DB: restbankapi
+          PGDATA: /data/devops/volumes/postgresql/data/pgdata
+      ports:
+          - "5432:5432"

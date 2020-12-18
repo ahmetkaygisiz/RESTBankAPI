@@ -1,7 +1,7 @@
 [source,bash]
 ----
-$ curl 'http://localhost:8080/api/1.0/accounts/00000006' -i -X PUT \
+$ curl 'http://localhost:8080/api/1.0/accounts/00000507' -i -X PUT \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
-    -d '{"accountNumber":"00000006","balance":3423.34,"creditCard":null}'
+    -d '{"accountNumber":"00000507","balance":3423.34,"creditCard":null}'
 ----

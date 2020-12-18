@@ -1,5 +1,5 @@
 [source,bash]
 ----
-$ curl 'http://localhost:8080/api/1.0/users/7' -i -X DELETE \
+$ curl 'http://localhost:8080/api/1.0/users/27' -i -X DELETE \
     -H 'Accept: application/json'
 ----

@@ -6,5 +6,5 @@ Accept: application/json
 Content-Length: 130
 Host: localhost:8080
 
-{"id":null,"transferFrom":"00000010","transferTo":"1234111100000011","amount":123.22,"description":"Some description","date":null}
+{"id":null,"transferFrom":"00000511","transferTo":"1234111100000059","amount":123.22,"description":"Some description","date":null}
 ----

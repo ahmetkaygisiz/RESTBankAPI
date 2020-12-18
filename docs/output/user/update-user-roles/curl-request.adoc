@@ -1,5 +1,5 @@
 [source,bash]
 ----
-$ curl 'http://localhost:8080/api/1.0/users/6/roles?roles=USER' -i -X PUT \
+$ curl 'http://localhost:8080/api/1.0/users/26/roles?roles=USER' -i -X PUT \
     -H 'Accept: application/json'
 ----

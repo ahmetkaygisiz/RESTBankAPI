@@ -3,5 +3,5 @@
 $ curl 'http://localhost:8080/api/1.0/transactions/creditcard2account' -i -X POST \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
-    -d '{"id":null,"transferFrom":"1234111100000006","transferTo":"00000004","amount":123.22,"description":"Some description","date":null}'
+    -d '{"id":null,"transferFrom":"1234111100000054","transferTo":"00000505","amount":123.22,"description":"Some description","date":null}'
 ----
